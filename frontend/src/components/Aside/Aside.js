@@ -1,7 +1,7 @@
 import React from 'react';
 import './Aside.css';
 
-const Main = () => {
+const Aside = () => {
   return (
     <div>
       <h1>Aside Component</h1>
