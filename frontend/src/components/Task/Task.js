@@ -1,10 +1,15 @@
 import React from 'react';
 import './Task.css';
+import DeleteTask from './DeleteTask'; 
+import AddTask from './AddTask'; 
+import EditTask from './EditTask'; 
+
+
 
 const Task = () => {
   return (
     <div>
-      <h1>Task Component</h1>
+      <AddTask/>
     </div>
   );
 };
