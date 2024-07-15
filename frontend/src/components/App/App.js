@@ -1,11 +1,10 @@
 import React from 'react';
-
+import Main from '../Main/Main';
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <h1>Bienvenido a la Aplicación de Gestión de Tareas</h1>
-        {/* Aquí puedes agregar otros componentes y lógica de tu aplicación */}
+        <Main />
       </header>
     </div>
   );
