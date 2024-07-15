@@ -12,39 +12,41 @@ const theme = createTheme();
 
 const AddTask = () => {
   return (
-    <ThemeProvider theme={theme}>
-      <div>
-        <Box
-          sx={{
-            display: 'flex',
-            height: '97vh',
-            justifyContent: 'flex-end',
-            alignItems: 'flex-end',
-            p: 1,
-          }}
-        >
-          <TextField
-            label="Add a Task"
-            sx={{ width: '1000px' }}
-            InputProps={{
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton>
-                    <AddIcon />
-                  </IconButton>
-                  <IconButton>
-                    <CalendarMonthIcon />
-                  </IconButton>
-                  <IconButton>
-                    <AccessAlarmIcon />
-                  </IconButton>
-                </InputAdornment>
-              ),
+    <div>
+      <ThemeProvider theme={theme}>
+        <div>
+          <Box
+            sx={{
+              display: 'flex',
+              height: '97vh',
+              justifyContent: 'flex-end',
+              alignItems: 'flex-end',
+              p: 1,
             }}
-          />
-        </Box>
-      </div>
-    </ThemeProvider>
+          >
+            <TextField
+              label="Add a Task"
+              sx={{ width: '1000px' }}
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton>
+                      <AddIcon />
+                    </IconButton>
+                    <IconButton>
+                      <CalendarMonthIcon />
+                    </IconButton>
+                    <IconButton>
+                      <AccessAlarmIcon />
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </Box>
+        </div>
+      </ThemeProvider>
+    </div>
   );
 };
 
