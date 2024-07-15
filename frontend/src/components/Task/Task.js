@@ -28,7 +28,6 @@ const Task = () => {
   
   return (
     <div>
-      <h1 style={{ textAlign: 'center', fontSize: '35px' }}>Tasks</h1>
       <div style={{ display: 'grid', justifyContent: 'end', alignItems: 'start', p: 0, paddingRight: '1px' }}>
         <Container maxWidth="md" sx={{ mt: 4 }} >
           {tasks.map(task => (
