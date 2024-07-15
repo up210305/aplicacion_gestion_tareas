@@ -1,3 +1,4 @@
+// src/components/AddTask.js
 import React from 'react';
 import TextField from '@mui/material/TextField';
 import Box from '@mui/material/Box';
@@ -48,7 +49,7 @@ const AddTask = () => {
       </ThemeProvider>
     </div>
   );
-};
+}
 
 export default AddTask;
 
