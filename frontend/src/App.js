@@ -1,4 +1,3 @@
-// src/App.js
 import React, { useState, useMemo, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -9,6 +8,7 @@ import SignIn from './components/SignIn';
 import SignUp from './components/SignUp';
 import List from './components/List';
 import Aside from './components/Aside';
+import AddTask from './components/AddTask';
 import { Brightness4, WbSunny } from '@mui/icons-material';
 
 function App() {
