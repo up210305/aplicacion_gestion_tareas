@@ -1,9 +1,9 @@
+// src/components/List.js
 import React, { useState } from 'react';
-import { Box, IconButton, List, ListItem, ListItemText, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Snackbar, Alert } from '@mui/material';
+import { Box, IconButton, List, ListItem, ListItemText, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Snackbar, Alert, TextField, Typography } from '@mui/material';
 import { Bookmark, Delete, Edit } from '@mui/icons-material';
 import AddTask from '../AddTask';
 
-// Define initial tasks with dueDate included
 const initialTaskList = [
   { id: 1, text: 'Task 1', important: false, createdDate: new Date().toLocaleDateString(), dueDate: '' },
   { id: 2, text: 'Task 2', important: true, createdDate: new Date().toLocaleDateString(), dueDate: '2024-08-01' },
@@ -12,17 +12,16 @@ const initialTaskList = [
   { id: 5, text: 'Task 5', important: false, createdDate: new Date().toLocaleDateString(), dueDate: '' },
 ];
 
-// Function to sort tasks by due date, putting tasks without a due date at the end
 const sortTasksByDueDate = (tasks) => {
   return tasks.slice().sort((a, b) => {
     if (a.dueDate && b.dueDate) {
       return new Date(a.dueDate) - new Date(b.dueDate);
     } else if (a.dueDate) {
-      return -1; // a comes first if it has a due date and b does not
+      return -1; 
     } else if (b.dueDate) {
-      return 1; // b comes first if it has a due date and a does not
+      return 1; 
     } else {
-      return 0; // both tasks have no due date
+      return 0;
     }
   });
 };
@@ -64,6 +63,8 @@ const TaskList = ({ darkMode }) => {
   const [open, setOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [listTitle, setListTitle] = useState('My Task List');
+  const [listDescription, setListDescription] = useState('This is my list description');
 
   const handleToggleImportant = (task) => {
     task.important = !task.important;
@@ -103,11 +104,32 @@ const TaskList = ({ darkMode }) => {
     setTasks([...tasks, newTask]);
   };
 
-  // Sort tasks by due date before rendering
   const sortedTasks = sortTasksByDueDate(tasks);
 
   return (
     <>
+      <Box sx={{ backgroundColor: darkMode ? '#333' : 'white', color: darkMode ? 'white' : 'inherit', borderRadius: '4px', padding: '10px', marginBottom: '20px' }}>
+        <Typography variant="h5" gutterBottom>
+          <TextField
+            label="List Title"
+            value={listTitle}
+            onChange={(e) => setListTitle(e.target.value)}
+            fullWidth
+            margin="normal"
+            sx={{ backgroundColor: darkMode ? '#444' : 'inherit', borderRadius: '4px' }}
+          />
+        </Typography>
+        <TextField
+          label="Description"
+          value={listDescription}
+          onChange={(e) => setListDescription(e.target.value)}
+          fullWidth
+          multiline
+          rows={2}
+          margin="normal"
+          sx={{ backgroundColor: darkMode ? '#444' : 'inherit', borderRadius: '4px' }}
+        />
+      </Box>
       <List sx={{ backgroundColor: darkMode ? '#333' : 'white', color: darkMode ? 'white' : 'inherit', borderRadius: '4px', padding: '10px' }}>
         {sortedTasks.map((task) => (
           <TaskItem
@@ -120,10 +142,7 @@ const TaskList = ({ darkMode }) => {
           />
         ))}
       </List>
-      <Dialog
-        open={open}
-        onClose={handleClose}
-      >
+      <Dialog open={open} onClose={handleClose}>
         <DialogTitle>{"Confirm Deletion"}</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -139,11 +158,7 @@ const TaskList = ({ darkMode }) => {
           </Button>
         </DialogActions>
       </Dialog>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-      >
+      <Snackbar open={snackbarOpen} autoHideDuration={3000} onClose={handleSnackbarClose}>
         <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
           Added to favorites
         </Alert>

@@ -1,14 +1,16 @@
-// src/App.js
+// src/components/Main.js
 import React, { useState, useMemo, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import SignIn from '../SignIn';
 import SignUp from '../SignUp';
 import List from '../List';
 import Aside from '../Aside';
+import NewList from '../NewList';
 import { Brightness4, WbSunny } from '@mui/icons-material';
 
 function Main() {
@@ -32,47 +34,44 @@ function Main() {
     setDarkMode(!darkMode);
   };
 
-  const RenderAside = () => {
-    const location = useLocation();
-    const showAside = location.pathname === '/list';
-    return showAside && <Aside />;
+  const location = useLocation();
+  const showAside = location.pathname === '/list';
+  const showNewListButton = location.pathname !== '/' && location.pathname !== '/sign-up';
+
+  const navigate = useNavigate();
+  const handleNewList = () => {
+    navigate('/new-list');
   };
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Router>
-        <Box sx={{ display: 'flex', height: '100vh', flexDirection: 'column' }}>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'flex-end',
-              p: 2,
-              backgroundColor: 'background.default',
-              color: 'text.primary',
-              borderBottom: '1px solid',
-              borderColor: 'divider',
-              flexShrink: 0,
-            }}
-          >
-            <IconButton color="inherit" onClick={toggleDarkMode}>
+      <Box sx={{ display: 'flex', height: '100vh' }}>
+        {showAside && <Aside />}
+        <Box sx={{ flex: 1, p: 2 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', mb: 2 }}>
+            {showNewListButton && (
+              <Button
+                variant="contained"
+                color="inherit"
+                onClick={handleNewList}
+                sx={{ color: 'white', mr: 2 }} // Cambia el color del texto a blanco
+              >
+                New List
+              </Button>
+            )}
+            <IconButton onClick={toggleDarkMode} color="inherit">
               {darkMode ? <WbSunny /> : <Brightness4 />}
             </IconButton>
           </Box>
-          <Box sx={{ display: 'flex', flex: 1 }}>
-            <RenderAside />
-            <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-              <Box sx={{ flex: 1 }}>
-                <Routes>
-                  <Route path="/list" element={<List darkMode={darkMode} toggleDarkMode={toggleDarkMode} />} />
-                  <Route path="/signup" element={<SignUp darkMode={darkMode} toggleDarkMode={toggleDarkMode} />} />
-                  <Route path="/" element={<SignIn darkMode={darkMode} toggleDarkMode={toggleDarkMode} />} />
-                </Routes>
-              </Box>
-            </Box>
-          </Box>
+          <Routes>
+            <Route path="/" element={<SignIn darkMode={darkMode} />} />
+            <Route path="/sign-up" element={<SignUp darkMode={darkMode} />} />
+            <Route path="/list" element={<List darkMode={darkMode} />} />
+            <Route path="/new-list" element={<NewList darkMode={darkMode} />} />
+          </Routes>
         </Box>
-      </Router>
+      </Box>
     </ThemeProvider>
   );
 }
