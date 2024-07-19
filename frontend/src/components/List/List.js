@@ -3,13 +3,29 @@ import { Box, IconButton, List, ListItem, ListItemText, Dialog, DialogActions, D
 import { Bookmark, Delete, Edit } from '@mui/icons-material';
 import AddTask from '../AddTask';
 
+// Define initial tasks with dueDate included
 const initialTaskList = [
-  { id: 1, text: 'Task 1', important: false },
-  { id: 2, text: 'Task 2', important: true },
-  { id: 3, text: 'Task 3', important: false },
-  { id: 4, text: 'Task 4', important: true },
-  { id: 5, text: 'Task 5', important: false },
+  { id: 1, text: 'Task 1', important: false, createdDate: new Date().toLocaleDateString(), dueDate: '' },
+  { id: 2, text: 'Task 2', important: true, createdDate: new Date().toLocaleDateString(), dueDate: '2024-08-01' },
+  { id: 3, text: 'Task 3', important: false, createdDate: new Date().toLocaleDateString(), dueDate: '' },
+  { id: 4, text: 'Task 4', important: true, createdDate: new Date().toLocaleDateString(), dueDate: '2024-07-25' },
+  { id: 5, text: 'Task 5', important: false, createdDate: new Date().toLocaleDateString(), dueDate: '' },
 ];
+
+// Function to sort tasks by due date, putting tasks without a due date at the end
+const sortTasksByDueDate = (tasks) => {
+  return tasks.slice().sort((a, b) => {
+    if (a.dueDate && b.dueDate) {
+      return new Date(a.dueDate) - new Date(b.dueDate);
+    } else if (a.dueDate) {
+      return -1; // a comes first if it has a due date and b does not
+    } else if (b.dueDate) {
+      return 1; // b comes first if it has a due date and a does not
+    } else {
+      return 0; // both tasks have no due date
+    }
+  });
+};
 
 const TaskItem = ({ task, onToggleImportant, onDelete, onEdit, darkMode }) => (
   <ListItem
@@ -22,7 +38,13 @@ const TaskItem = ({ task, onToggleImportant, onDelete, onEdit, darkMode }) => (
       color: darkMode ? 'white' : 'inherit',
     }}
   >
-    <ListItemText primary={task.text} sx={{ color: darkMode ? 'white' : 'inherit' }} />
+    <Box>
+      <ListItemText 
+        primary={task.text}
+        secondary={`Created: ${task.createdDate} | Due: ${task.dueDate || 'N/A'}`}
+        sx={{ color: darkMode ? 'white' : 'inherit' }}
+      />
+    </Box>
     <Box>
       <IconButton onClick={() => onToggleImportant(task)} sx={{ color: task.important ? '#1976d2' : darkMode ? '#fff' : 'rgba(0, 0, 0, 0.54)' }}>
         <Bookmark />
@@ -46,7 +68,6 @@ const TaskList = ({ darkMode }) => {
   const handleToggleImportant = (task) => {
     task.important = !task.important;
     setTasks([...tasks]);
-    console.log('Toggle important for task:', task.id);
     if (task.important) {
       setSnackbarOpen(true);
     }
@@ -59,7 +80,6 @@ const TaskList = ({ darkMode }) => {
 
   const confirmDelete = () => {
     setTasks(tasks.filter(task => task.id !== taskToDelete.id));
-    console.log('Delete task:', taskToDelete.id);
     setOpen(false);
   };
 
@@ -78,15 +98,18 @@ const TaskList = ({ darkMode }) => {
     setSnackbarOpen(false);
   };
 
-  const handleAddTask = (taskName) => {
-    const newTask = { id: tasks.length + 1, text: taskName, important: false };
+  const handleAddTask = (taskName, dueDate) => {
+    const newTask = { id: tasks.length + 1, text: taskName, important: false, createdDate: new Date().toLocaleDateString(), dueDate };
     setTasks([...tasks, newTask]);
   };
+
+  // Sort tasks by due date before rendering
+  const sortedTasks = sortTasksByDueDate(tasks);
 
   return (
     <>
       <List sx={{ backgroundColor: darkMode ? '#333' : 'white', color: darkMode ? 'white' : 'inherit', borderRadius: '4px', padding: '10px' }}>
-        {tasks.map((task) => (
+        {sortedTasks.map((task) => (
           <TaskItem
             key={task.id}
             task={task}
