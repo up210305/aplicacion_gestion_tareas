@@ -25,6 +25,10 @@ const AddTask = ({ darkMode, onAddTask }) => {
         backgroundColor: darkMode ? '#222' : '#f5f5f5',
         boxShadow: '0 -1px 5px rgba(0, 0, 0, 0.1)',
         borderRadius: '12px',
+        position: 'fixed',
+        bottom: '0',
+        left: '240px', // Adjust based on the width of the aside component
+        right: '0',
         margin: '10px',
       }}
     >

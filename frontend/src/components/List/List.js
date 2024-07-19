@@ -110,27 +110,13 @@ const TaskList = ({ darkMode }) => {
     <>
       <Box sx={{ backgroundColor: darkMode ? '#333' : 'white', color: darkMode ? 'white' : 'inherit', borderRadius: '4px', padding: '10px', marginBottom: '20px' }}>
         <Typography variant="h5" gutterBottom>
-          <TextField
-            label="List Title"
-            value={listTitle}
-            onChange={(e) => setListTitle(e.target.value)}
-            fullWidth
-            margin="normal"
-            sx={{ backgroundColor: darkMode ? '#444' : 'inherit', borderRadius: '4px' }}
-          />
+          {listTitle}
         </Typography>
-        <TextField
-          label="Description"
-          value={listDescription}
-          onChange={(e) => setListDescription(e.target.value)}
-          fullWidth
-          multiline
-          rows={2}
-          margin="normal"
-          sx={{ backgroundColor: darkMode ? '#444' : 'inherit', borderRadius: '4px' }}
-        />
+        <Typography variant="body1">
+          {listDescription}
+        </Typography>
       </Box>
-      <List sx={{ backgroundColor: darkMode ? '#333' : 'white', color: darkMode ? 'white' : 'inherit', borderRadius: '4px', padding: '10px' }}>
+      <List sx={{ backgroundColor: darkMode ? '#333' : 'white', color: darkMode ? 'white' : 'inherit', borderRadius: '4px', padding: '10px', paddingBottom: '70px' /* Extra padding for Add Task bar */ }}>
         {sortedTasks.map((task) => (
           <TaskItem
             key={task.id}
@@ -143,27 +129,27 @@ const TaskList = ({ darkMode }) => {
         ))}
       </List>
       <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>{"Confirm Deletion"}</DialogTitle>
+        <DialogTitle>Delete Task</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Are you sure you want to delete this task: {taskToDelete?.text}?
+            Are you sure you want to delete this task?
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={confirmDelete} color="secondary">
+          <Button onClick={confirmDelete} color="primary">
             Delete
           </Button>
         </DialogActions>
       </Dialog>
       <Snackbar open={snackbarOpen} autoHideDuration={3000} onClose={handleSnackbarClose}>
-        <Alert onClose={handleSnackbarClose} severity="success" sx={{ width: '100%' }}>
-          Added to favorites
+        <Alert onClose={handleSnackbarClose} severity="success">
+          Task marked as important!
         </Alert>
       </Snackbar>
-      <AddTask onAddTask={handleAddTask} darkMode={darkMode} />
+      <AddTask darkMode={darkMode} onAddTask={handleAddTask} />
     </>
   );
 };

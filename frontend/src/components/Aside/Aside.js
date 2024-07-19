@@ -2,8 +2,11 @@
 import React from 'react';
 import { List, ListItem, ListItemIcon, ListItemText, Divider, Avatar, Typography, InputBase } from '@mui/material';
 import { Home, CheckBox, ViewList, Bookmark, LocalShipping, Cloud, Diamond } from '@mui/icons-material';
+import { useNavigate } from 'react-router-dom';
 
 const Aside = () => {
+  const navigate = useNavigate(); // Use useNavigate hook
+
   return (
     <div style={{ width: 250, padding: 16 }}>
       <div style={{ display: 'flex', alignItems: 'center', marginBottom: 16 }}>
@@ -36,7 +39,7 @@ const Aside = () => {
           </ListItemIcon>
           <ListItemText primary="Tasks" />
         </ListItem>
-        <ListItem button>
+        <ListItem button onClick={() => navigate('/list')}>
           <ListItemIcon>
             <ViewList />
           </ListItemIcon>
