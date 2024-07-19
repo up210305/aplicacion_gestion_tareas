@@ -69,7 +69,7 @@ export default function SignIn() {
             autoComplete="current-password"
           />
           {/* Integrate the SignIn button with Link to navigate to List */}
-          <Link component={RouterLink} to="/list" style={{ textDecoration: 'none' }}>
+          <Link component={RouterLink} to="/home" style={{ textDecoration: 'none' }}>
             <Button
               type="submit"
               fullWidth

@@ -27,7 +27,7 @@ const Aside = () => {
         }}
       />
       <List>
-        <ListItem button>
+        <ListItem button onClick={() => navigate('/home')}>
           <ListItemIcon>
             <Home />
           </ListItemIcon>
@@ -54,24 +54,7 @@ const Aside = () => {
       </List>
       <Divider style={{ margin: '16px 0' }} />
       <List>
-        <ListItem button>
-          <ListItemIcon>
-            <LocalShipping />
-          </ListItemIcon>
-          <ListItemText primary="List 1" />
-        </ListItem>
-        <ListItem button>
-          <ListItemIcon>
-            <Cloud />
-          </ListItemIcon>
-          <ListItemText primary="List 2" />
-        </ListItem>
-        <ListItem button>
-          <ListItemIcon>
-            <Diamond />
-          </ListItemIcon>
-          <ListItemText primary="List 3" />
-        </ListItem>
+
       </List>
     </div>
   );
