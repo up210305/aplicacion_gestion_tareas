@@ -5,10 +5,10 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
-import SignIn from './components/SignIn';
-import SignUp from './components/SignUp';
-import List from './components/List';
-import Aside from './components/Aside';
+import SignIn from '../SignIn';
+import SignUp from '../SignUp';
+import List from '../List';
+import Aside from '../Aside';
 import { Brightness4, WbSunny } from '@mui/icons-material';
 
 function Main() {
@@ -74,4 +74,4 @@ function Main() {
   );
 }
 
-export default App;
+export default Main;
