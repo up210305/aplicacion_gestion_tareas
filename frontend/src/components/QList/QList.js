@@ -2,16 +2,22 @@
 import React, { useState } from 'react';
 import { Box, Typography, List, ListItem, ListItemText, IconButton } from '@mui/material';
 import AddCircle from '@mui/icons-material/AddCircle';
+import { useNavigate } from 'react-router-dom';
 import NewList from '../NewList';
 
 const QList = ({ darkMode }) => {
   const [lists, setLists] = useState([]);
   const [showNewList, setShowNewList] = useState(false);
+  const navigate = useNavigate();
 
   const handleAddList = (title, description) => {
     const newList = { id: lists.length + 1, title, description };
     setLists([...lists, newList]);
     setShowNewList(false);
+  };
+
+  const handleListClick = (listId) => {
+    navigate(`/list/${listId}`);
   };
 
   return (
@@ -21,7 +27,12 @@ const QList = ({ darkMode }) => {
       </Typography>
       <List>
         {lists.map((list) => (
-          <ListItem key={list.id} sx={{ backgroundColor: darkMode ? '#333' : '#fff', marginBottom: '10px', borderRadius: '4px' }}>
+          <ListItem 
+            key={list.id} 
+            sx={{ backgroundColor: darkMode ? '#333' : '#fff', marginBottom: '10px', borderRadius: '4px' }}
+            button
+            onClick={() => handleListClick(list.id)}
+          >
             <ListItemText 
               primary={list.title}
               secondary={list.description}

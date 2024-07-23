@@ -1,15 +1,17 @@
 // src/components/List.js
-import React, { useState } from 'react';
-import { Box, IconButton, List, ListItem, ListItemText, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Snackbar, Alert, TextField, Typography } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Box, IconButton, List as MUIList, ListItem, ListItemText, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Snackbar, Alert, Typography } from '@mui/material';
 import { Bookmark, Delete, Edit } from '@mui/icons-material';
+import { useParams } from 'react-router-dom';
 import AddTask from '../AddTask';
+import Aside from '../Aside';
 
 const initialTaskList = [
-  { id: 1, text: 'Task 1', important: false, createdDate: new Date().toLocaleDateString(), dueDate: '' },
-  { id: 2, text: 'Task 2', important: true, createdDate: new Date().toLocaleDateString(), dueDate: '2024-08-01' },
-  { id: 3, text: 'Task 3', important: false, createdDate: new Date().toLocaleDateString(), dueDate: '' },
-  { id: 4, text: 'Task 4', important: true, createdDate: new Date().toLocaleDateString(), dueDate: '2024-07-25' },
-  { id: 5, text: 'Task 5', important: false, createdDate: new Date().toLocaleDateString(), dueDate: '' },
+  { id: 1, text: 'Task 1', important: false, createdDate: new Date().toLocaleDateString(), dueDate: '', listId: 1 },
+  { id: 2, text: 'Task 2', important: true, createdDate: new Date().toLocaleDateString(), dueDate: '2024-08-01', listId: 1 },
+  { id: 3, text: 'Task 3', important: false, createdDate: new Date().toLocaleDateString(), dueDate: '', listId: 2 },
+  { id: 4, text: 'Task 4', important: true, createdDate: new Date().toLocaleDateString(), dueDate: '2024-07-25', listId: 2 },
+  { id: 5, text: 'Task 5', important: false, createdDate: new Date().toLocaleDateString(), dueDate: '', listId: 1 },
 ];
 
 const sortTasksByDueDate = (tasks) => {
@@ -59,7 +61,8 @@ const TaskItem = ({ task, onToggleImportant, onDelete, onEdit, darkMode }) => (
 );
 
 const TaskList = ({ darkMode }) => {
-  const [tasks, setTasks] = useState(initialTaskList);
+  const { listId } = useParams();
+  const [tasks, setTasks] = useState(initialTaskList.filter(task => task.listId === parseInt(listId)));
   const [open, setOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
@@ -100,57 +103,60 @@ const TaskList = ({ darkMode }) => {
   };
 
   const handleAddTask = (taskName, dueDate) => {
-    const newTask = { id: tasks.length + 1, text: taskName, important: false, createdDate: new Date().toLocaleDateString(), dueDate };
+    const newTask = { id: tasks.length + 1, text: taskName, important: false, createdDate: new Date().toLocaleDateString(), dueDate, listId: parseInt(listId) };
     setTasks([...tasks, newTask]);
   };
 
   const sortedTasks = sortTasksByDueDate(tasks);
 
   return (
-    <>
-      <Box sx={{ backgroundColor: darkMode ? '#333' : 'white', color: darkMode ? 'white' : 'inherit', borderRadius: '4px', padding: '10px', marginBottom: '20px' }}>
-        <Typography variant="h5" gutterBottom>
-          {listTitle}
-        </Typography>
-        <Typography variant="body1">
-          {listDescription}
-        </Typography>
+    <Box sx={{ display: 'flex', height: '100vh' }}>
+      <Aside />
+      <Box sx={{ flex: 1, p: 2 }}>
+        <Box sx={{ backgroundColor: darkMode ? '#333' : 'white', color: darkMode ? 'white' : 'inherit', borderRadius: '4px', padding: '10px', marginBottom: '20px' }}>
+          <Typography variant="h5" gutterBottom>
+            {listTitle}
+          </Typography>
+          <Typography variant="body1">
+            {listDescription}
+          </Typography>
+        </Box>
+        <MUIList sx={{ backgroundColor: darkMode ? '#333' : 'white', color: darkMode ? 'white' : 'inherit', borderRadius: '4px', padding: '10px', paddingBottom: '70px' /* Extra padding for Add Task bar */ }}>
+          {sortedTasks.map((task) => (
+            <TaskItem
+              key={task.id}
+              task={task}
+              onToggleImportant={handleToggleImportant}
+              onDelete={handleDelete}
+              onEdit={handleEdit}
+              darkMode={darkMode}
+            />
+          ))}
+        </MUIList>
+        <Dialog open={open} onClose={handleClose}>
+          <DialogTitle>Delete Task</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Are you sure you want to delete this task?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleClose} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={confirmDelete} color="primary">
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+        <Snackbar open={snackbarOpen} autoHideDuration={3000} onClose={handleSnackbarClose}>
+          <Alert onClose={handleSnackbarClose} severity="success">
+            Task marked as important!
+          </Alert>
+        </Snackbar>
+        <AddTask darkMode={darkMode} onAddTask={handleAddTask} />
       </Box>
-      <List sx={{ backgroundColor: darkMode ? '#333' : 'white', color: darkMode ? 'white' : 'inherit', borderRadius: '4px', padding: '10px', paddingBottom: '70px' /* Extra padding for Add Task bar */ }}>
-        {sortedTasks.map((task) => (
-          <TaskItem
-            key={task.id}
-            task={task}
-            onToggleImportant={handleToggleImportant}
-            onDelete={handleDelete}
-            onEdit={handleEdit}
-            darkMode={darkMode}
-          />
-        ))}
-      </List>
-      <Dialog open={open} onClose={handleClose}>
-        <DialogTitle>Delete Task</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to delete this task?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={confirmDelete} color="primary">
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Snackbar open={snackbarOpen} autoHideDuration={3000} onClose={handleSnackbarClose}>
-        <Alert onClose={handleSnackbarClose} severity="success">
-          Task marked as important!
-        </Alert>
-      </Snackbar>
-      <AddTask darkMode={darkMode} onAddTask={handleAddTask} />
-    </>
+    </Box>
   );
 };
 

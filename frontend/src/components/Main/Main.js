@@ -5,14 +5,14 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import IconButton from '@mui/material/IconButton';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import SignIn from '../SignIn';
 import SignUp from '../SignUp';
-import QList from '../QList'; // Import QList component
-import Aside from '../Aside';
+import QList from '../QList';
 import NewList from '../NewList';
-import Home from '../Home'; // Import Home component
+import Home from '../Home';
+import List from '../List';  // Import List component
 import { Brightness4, WbSunny } from '@mui/icons-material';
+import Aside from '../Aside'; // Import the Aside component
 
 function Main() {
   const [darkMode, setDarkMode] = useState(() => {
@@ -50,7 +50,8 @@ function Main() {
             <Route path="/signup" element={<SignUp darkMode={darkMode} />} />
             <Route path="/list" element={<QList darkMode={darkMode} />} />
             <Route path="/new-list" element={<NewList darkMode={darkMode} />} />
-            <Route path="/home" element={<Home />} /> {/* Add route for Home */}
+            <Route path="/home" element={<Home />} />
+            <Route path="/list/:listId" element={<List darkMode={darkMode} />} />  {/* Add route for List component */}
           </Routes>
         </Box>
       </Box>
