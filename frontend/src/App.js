@@ -1,6 +1,6 @@
 // App.js
 import React from 'react';
-import Main from './components/Main'; // Adjust the path if `main.js` is in a different directory
+import Main from './components/Main'; // Adjust the path relative to the `App.js` file location
 
 function App() {
   return (
