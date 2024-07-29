@@ -2,8 +2,6 @@ import React from 'react';
 import { Box, IconButton, List, ListItem, ListItemText } from '@mui/material';
 import { Bookmark, Delete, Edit } from '@mui/icons-material';
 
-
-
 const ImportantTaskItem = ({ task, onToggleImportant, onDelete, onEdit, darkMode }) => (
   <ListItem
     sx={{
