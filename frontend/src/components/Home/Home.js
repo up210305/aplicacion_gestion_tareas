@@ -5,7 +5,7 @@ import WbSunnyIcon from '@mui/icons-material/WbSunny';
 import { Box, Card, CardContent, Grid, Typography } from '@mui/material';
 import React from 'react';
 
-const TaskManager = () => {
+const Home = () => {
   return (
     <Box sx={{ padding: 4 }}>
       <Grid container spacing={4}>
@@ -69,3 +69,5 @@ const TaskManager = () => {
     </Box>
   );
 }
+
+export default Home;
