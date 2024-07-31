@@ -1,133 +1,47 @@
 package com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import java.util.Optional;
 
-import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.CreateEmployeeDTO;
-import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.EmployeeDTO;
-import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.EmployeeOrderDTO;
-import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.exception.ExcepcionRecursoNoEncontrado;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.model.Employee;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.service.EmployeeService;
+import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.util.JwtUtil;
 
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.validation.Valid;
-
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-
-@Tag(name = "Endpoints de Empleados", description = "CRUD de empleados")
 @RestController
-@RequestMapping("/employees")
+@RequestMapping("/api/auth")
 public class EmployeeController {
 
-  private EmployeeService employeeService;
-  // private EmployeeServicio employeeService; // A manera de clase
+    @Autowired
+    private EmployeeService employeeService;
 
-  public EmployeeController(@Autowired EmployeeService employeeService) {
-    this.employeeService = employeeService;
-  }
+    @PostMapping("/register")
+    public ResponseEntity<Employee> registerEmployee(@RequestBody Employee employee) {
+        Employee registeredEmployee = employeeService.registerEmployee(employee);
+        return ResponseEntity.ok(registeredEmployee);
+    }
 
-  @GetMapping({ "filtrar/{filtro}" })
-  @ResponseStatus(HttpStatus.OK)
-  public Collection<Employee> selectEmployees(@PathVariable Boolean filtro) {
-    return employeeService.selectEmployees(filtro);
-  }
+    @PostMapping("/login")
+    public ResponseEntity<String> loginEmployee(@RequestBody Employee loginRequest) {
+        return employeeService.loginEmployee(loginRequest.getUsername(), loginRequest.getPassword())
+                .map(employee -> {
+                    // Generar el token JWT usando el ID del empleado autenticado
+                    String token = JwtUtil.generateToken(employee.getIdEmployee());
+                    // Retornar el token en formato JSON
+                    return ResponseEntity.ok("{\"token\":\"" + token + "\", \"userId\":\"" + employee.getIdEmployee() + "\"}");
+                })
+                .orElseGet(() -> ResponseEntity.status(401).body("{\"message\": \"Invalid credentials\"}"));
+    }
 
-  @GetMapping({ "sales" })
-  @ResponseStatus(HttpStatus.OK)
-  // public List<Map<String, Object>> saleByEmployee() {
-  public List<Object[]> saleByEmployee() {
-    return employeeService.saleByEmployee();
-  }
-
-  @GetMapping({ "/all" })
-  public ResponseEntity<List<Employee>> getEmployees() {
-    return ResponseEntity.ok(employeeService.findAll());
-  }
-
-  @GetMapping({ "/todos" })
-  @ResponseStatus(HttpStatus.OK)
-  public List<Employee> findAll() {
-    return employeeService.findAll();
-  }
-
-  @GetMapping({ "/todosDto" })
-  @ResponseStatus(HttpStatus.OK)
-  public List<EmployeeDTO> findAllDto() {
-    return employeeService.findAllDto();
-  }
-
-  @GetMapping("/{id}") // http://localhost:8585/employees/1
-  public EmployeeDTO getEmployee(@PathVariable Long id) throws ExcepcionRecursoNoEncontrado {
-    return employeeService.getEmployeeDTO(id);
-  }
-
-  @GetMapping() // http://localhost:8585/employees?id=2
-  public Employee getEmpleado(@RequestParam Long id) throws ExcepcionRecursoNoEncontrado {
-    return employeeService.getEmployee(id);
-  }
-  
-
-  /*
-   * post: http://localhost:8585/employees
-   * {
-   * "idemployee": null,
-   * "lastName" : "Madrazo",
-   * "firstName" : "Pepito",
-   * "birthDate" : "1980-03-08",
-   * "hireDate" : "2024-07-01",
-   * "celular" : "4497654321",
-   * "active" : false
-   * }
-   */
-  @PostMapping // Altas
-  @ResponseStatus(HttpStatus.CREATED)
-  public Employee save(@Valid @RequestBody Employee data) {    // duplicados por Employee
-    return employeeService.save(data);
-  }
-
-  @PostMapping({ "/alta" })
-  @ResponseStatus(HttpStatus.CREATED)
-  public EmployeeDTO save(@Valid @RequestBody CreateEmployeeDTO data) {
-    return employeeService.saveDTO(data);
-  }
-
-
-  @DeleteMapping("/{id}") // Bajas
-  @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void deleteEmployee(@PathVariable Long id) {
-    employeeService.delete(id);
-  }
-
-  /*
-   * PUT: http://localhost:8585/employees/12
-   * {
-   * "idemployee": 12,
-   * "lastName" : "Palos",
-   * "firstName" : "Pepito",
-   * "birthDate" : "1970-03-08",
-   * "hireDate" : "2024-06-06",
-   * "celular" : "4497654320",
-   * "active" : true
-   * }
-   */
-  @PutMapping("/{employeeid}") // Cambios
-  @ResponseStatus(HttpStatus.NO_CONTENT)
-  public void update(@PathVariable long employeeid, @Valid @RequestBody Employee data)    // Corregir UpdateEmployeeDTO
-      throws ExcepcionRecursoNoEncontrado {
-    employeeService.update(employeeid, data);
-  }
-
-  @Operation(summary = "Obtiene las Ordenes de un Empleado determinado")
-  @GetMapping("/{idEmployee}/orders")
-  @ResponseStatus(HttpStatus.OK)
-  public EmployeeOrderDTO findAllEmployeeOrders(@PathVariable long idEmployee) throws ExcepcionRecursoNoEncontrado {
-  return employeeService.findByIdWithOrders(idEmployee);
-  }
-
+    @GetMapping("/getEmployee/{id}")
+    public ResponseEntity<Optional<Employee>> getEmployee(@PathVariable Long id) {
+        return ResponseEntity.ok(employeeService.getEmployee(id));
+    }
 }
