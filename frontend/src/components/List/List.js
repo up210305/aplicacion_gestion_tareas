@@ -1,32 +1,10 @@
-// src/components/List.js
-import React, { useState, useEffect } from 'react';
-import { Box, IconButton, List as MUIList, ListItem, ListItemText, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button, Snackbar, Alert, Typography } from '@mui/material';
 import { Bookmark, Delete, Edit } from '@mui/icons-material';
-import { useParams } from 'react-router-dom';
+import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, ListItem, ListItemText, List as MUIList, Snackbar, Typography } from '@mui/material';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom'; // Asegúrate de importar useParams
 import AddTask from '../AddTask';
 import Aside from '../Aside';
-
-const initialTaskList = [
-  { id: 1, text: 'Task 1', important: false, createdDate: new Date().toLocaleDateString(), dueDate: '', listId: 1 },
-  { id: 2, text: 'Task 2', important: true, createdDate: new Date().toLocaleDateString(), dueDate: '2024-08-01', listId: 1 },
-  { id: 3, text: 'Task 3', important: false, createdDate: new Date().toLocaleDateString(), dueDate: '', listId: 2 },
-  { id: 4, text: 'Task 4', important: true, createdDate: new Date().toLocaleDateString(), dueDate: '2024-07-25', listId: 2 },
-  { id: 5, text: 'Task 5', important: false, createdDate: new Date().toLocaleDateString(), dueDate: '', listId: 1 },
-];
-
-const sortTasksByDueDate = (tasks) => {
-  return tasks.slice().sort((a, b) => {
-    if (a.dueDate && b.dueDate) {
-      return new Date(a.dueDate) - new Date(b.dueDate);
-    } else if (a.dueDate) {
-      return -1; 
-    } else if (b.dueDate) {
-      return 1; 
-    } else {
-      return 0;
-    }
-  });
-};
 
 const TaskItem = ({ task, onToggleImportant, onDelete, onEdit, darkMode }) => (
   <ListItem
@@ -41,8 +19,8 @@ const TaskItem = ({ task, onToggleImportant, onDelete, onEdit, darkMode }) => (
   >
     <Box>
       <ListItemText 
-        primary={task.text}
-        secondary={`Created: ${task.createdDate} | Due: ${task.dueDate || 'N/A'}`}
+        primary={task.task_title}
+        secondary={`Created: ${task.creation_date} | Due: ${task.expire_date || 'N/A'}`}
         sx={{ color: darkMode ? 'white' : 'inherit' }}
       />
     </Box>
@@ -53,7 +31,7 @@ const TaskItem = ({ task, onToggleImportant, onDelete, onEdit, darkMode }) => (
       <IconButton onClick={() => onDelete(task)} sx={{ color: darkMode ? '#f44336' : 'rgba(0, 0, 0, 0.54)' }}>
         <Delete />
       </IconButton>
-      <IconButton onClick={() => onEdit(task.id)} sx={{ color: darkMode ? '#1976d2' : 'rgba(0, 0, 0, 0.54)' }}>
+      <IconButton onClick={() => onEdit(task.id_task)} sx={{ color: darkMode ? '#1976d2' : 'rgba(0, 0, 0, 0.54)' }}>
         <Edit />
       </IconButton>
     </Box>
@@ -61,19 +39,39 @@ const TaskItem = ({ task, onToggleImportant, onDelete, onEdit, darkMode }) => (
 );
 
 const TaskList = ({ darkMode }) => {
-  const { listId } = useParams();
-  const [tasks, setTasks] = useState(initialTaskList.filter(task => task.listId === parseInt(listId)));
+  const { listId } = useParams(); // Obtener listId de los parámetros de la URL
+  const [tasks, setTasks] = useState([]);
   const [open, setOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [listTitle, setListTitle] = useState('My Task List');
   const [listDescription, setListDescription] = useState('This is my list description');
 
-  const handleToggleImportant = (task) => {
-    task.important = !task.important;
-    setTasks([...tasks]);
-    if (task.important) {
-      setSnackbarOpen(true);
+  useEffect(() => {
+    const fetchTasks = async () => {
+      try {
+        const response = listId 
+          ? await axios.get(`http://localhost:8080/api/lists/${listId}/tasks`) 
+          : await axios.get('http://localhost:8080/api/tasks/no-list');
+        setTasks(response.data);
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+      }
+    };
+
+    fetchTasks();
+  }, [listId]);
+
+  const handleToggleImportant = async (task) => {
+    try {
+      await axios.patch(`http://localhost:8080/api/tasks/${task.id_task}`, { important: !task.important });
+      task.important = !task.important;
+      setTasks([...tasks]);
+      if (task.important) {
+        setSnackbarOpen(true);
+      }
+    } catch (error) {
+      console.error('Error updating task importance:', error);
     }
   };
 
@@ -82,9 +80,14 @@ const TaskList = ({ darkMode }) => {
     setOpen(true);
   };
 
-  const confirmDelete = () => {
-    setTasks(tasks.filter(task => task.id !== taskToDelete.id));
-    setOpen(false);
+  const confirmDelete = async () => {
+    try {
+      await axios.delete(`http://localhost:8080/api/tasks/${taskToDelete.id_task}`);
+      setTasks(tasks.filter(task => task.id_task !== taskToDelete.id_task));
+      setOpen(false);
+    } catch (error) {
+      console.error('Error deleting task:', error);
+    }
   };
 
   const handleClose = () => {
@@ -102,12 +105,19 @@ const TaskList = ({ darkMode }) => {
     setSnackbarOpen(false);
   };
 
-  const handleAddTask = (taskName, dueDate) => {
-    const newTask = { id: tasks.length + 1, text: taskName, important: false, createdDate: new Date().toLocaleDateString(), dueDate, listId: parseInt(listId) };
-    setTasks([...tasks, newTask]);
+  const handleAddTask = async (taskName, dueDate) => {
+    try {
+      const response = await axios.post('http://localhost:8080/api/tasks', { 
+        task_title: taskName, 
+        expire_date: dueDate, 
+        list_id: listId ? parseInt(listId) : null 
+      });
+      const newTask = response.data;
+      setTasks([...tasks, newTask]);
+    } catch (error) {
+      console.error('Error adding task:', error);
+    }
   };
-
-  const sortedTasks = sortTasksByDueDate(tasks);
 
   return (
     <Box sx={{ display: 'flex', height: '100vh' }}>
@@ -122,9 +132,9 @@ const TaskList = ({ darkMode }) => {
           </Typography>
         </Box>
         <MUIList sx={{ backgroundColor: darkMode ? '#333' : 'white', color: darkMode ? 'white' : 'inherit', borderRadius: '4px', padding: '10px', paddingBottom: '70px' /* Extra padding for Add Task bar */ }}>
-          {sortedTasks.map((task) => (
+          {tasks.map((task) => (
             <TaskItem
-              key={task.id}
+              key={task.id_task}
               task={task}
               onToggleImportant={handleToggleImportant}
               onDelete={handleDelete}

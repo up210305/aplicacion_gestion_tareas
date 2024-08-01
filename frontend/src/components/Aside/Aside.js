@@ -1,11 +1,13 @@
-// src/components/aside/Aside.js
+import { Bookmark, CheckBox, Home, ViewList } from '@mui/icons-material';
+import { Avatar, Divider, InputBase, List, ListItem, ListItemIcon, ListItemText, Typography } from '@mui/material';
 import React from 'react';
-import { List, ListItem, ListItemIcon, ListItemText, Divider, Avatar, Typography, InputBase } from '@mui/material';
-import { Home, CheckBox, ViewList, Bookmark, LocalShipping, Cloud, Diamond } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
 const Aside = () => {
-  const navigate = useNavigate(); // Use useNavigate hook
+  const navigate = useNavigate();
+
+  // Example listId for demonstration; replace with actual logic as needed
+  const exampleListId = 1;
 
   return (
     <div style={{ width: 250, padding: 16 }}>
@@ -33,7 +35,7 @@ const Aside = () => {
           </ListItemIcon>
           <ListItemText primary="Home" />
         </ListItem>
-        <ListItem button>
+        <ListItem button onClick={() => navigate(`/tasks/${exampleListId}`)}>
           <ListItemIcon>
             <CheckBox />
           </ListItemIcon>
@@ -53,9 +55,6 @@ const Aside = () => {
         </ListItem>
       </List>
       <Divider style={{ margin: '16px 0' }} />
-      <List>
-
-      </List>
     </div>
   );
 };

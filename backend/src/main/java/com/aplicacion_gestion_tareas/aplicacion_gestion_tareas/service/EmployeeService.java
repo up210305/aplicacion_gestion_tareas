@@ -30,4 +30,8 @@ public class EmployeeService {
     public Optional<Employee> getEmployee(Long id) {
         return employeeRepository.findById(id);
     }
+
+    public Optional<Employee> getEmployeeById(Long id) {
+        return employeeRepository.findById(id);
+    }
 }
