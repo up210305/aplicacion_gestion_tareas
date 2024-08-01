@@ -1,17 +1,18 @@
 package com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto;
 
-import java.time.LocalDate;
+import java.util.Date;
 
 import lombok.Data;
 
 @Data
 public class TaskDTO {
     private Long idTask;
-    private String title;
-    private String description;
-    private LocalDate creationDate;
-    private LocalDate expireDate;
+    private String taskTitle;
+    private String taskDescription;
+    private Date creationDate;
+    private Date expireDate;
     private Boolean completed;
-    private Long employeeId;
-    private Long taskListId;
+    private Boolean favorite;
+    private Long idEmployee;
+    private Long idList;
 }
