@@ -45,16 +45,16 @@ const Aside = () => {
           </ListItemIcon>
           <ListItemText primary="Lists" />
         </ListItem>
-        <ListItem button>
+        <ListItem button onClick={() => navigate('/importanttasks')}>
           <ListItemIcon>
-            <Bookmark />
+            <Bookmark /> {/* Cambiado de Home a Bookmark */}
           </ListItemIcon>
-          <ListItemText primary="Important" />
+          <ListItemText primary="Important Tasks" />
         </ListItem>
       </List>
       <Divider style={{ margin: '16px 0' }} />
       <List>
-
+        {/* Agregar más ítems aquí si es necesario */}
       </List>
     </div>
   );

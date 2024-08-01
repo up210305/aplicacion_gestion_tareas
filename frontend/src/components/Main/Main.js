@@ -1,4 +1,4 @@
-// src/components/Main.js
+// src/components/Main/Main.js
 import React, { useState, useMemo, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, useLocation } from 'react-router-dom';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
@@ -10,9 +10,10 @@ import SignUp from '../SignUp';
 import QList from '../QList';
 import NewList from '../NewList';
 import Home from '../Home';
-import List from '../List';  // Import List component
+import ImportantTasks from '../ImportantTasks/ImportantTasks'; // Ruta corregida
+import List from '../List';  
 import { Brightness4, WbSunny } from '@mui/icons-material';
-import Aside from '../Aside'; // Import the Aside component
+import Aside from '../Aside'; 
 
 function Main() {
   const [darkMode, setDarkMode] = useState(() => {
@@ -32,7 +33,7 @@ function Main() {
   }, [darkMode]);
 
   const location = useLocation();
-  const showAside = location.pathname === '/list' || location.pathname === '/home';
+  const showAside = location.pathname === '/list' || location.pathname === '/home' || location.pathname === '/importanttasks';
 
   return (
     <ThemeProvider theme={theme}>
@@ -49,9 +50,10 @@ function Main() {
             <Route path="/" element={<SignIn darkMode={darkMode} />} />
             <Route path="/signup" element={<SignUp darkMode={darkMode} />} />
             <Route path="/list" element={<QList darkMode={darkMode} />} />
+            <Route path="/importanttasks" element={<ImportantTasks darkMode={darkMode} />} />
             <Route path="/new-list" element={<NewList darkMode={darkMode} />} />
             <Route path="/home" element={<Home />} />
-            <Route path="/list/:listId" element={<List darkMode={darkMode} />} />  {/* Add route for List component */}
+            <Route path="/list/:listId" element={<List darkMode={darkMode} />} />
           </Routes>
         </Box>
       </Box>
