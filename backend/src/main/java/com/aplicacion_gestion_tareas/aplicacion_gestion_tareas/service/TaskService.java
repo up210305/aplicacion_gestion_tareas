@@ -1,12 +1,13 @@
 package com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.service;
 
-import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.model.Task;
-import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.repository.TaskRepository;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.model.Task;
+import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.repository.TaskRepository;
 
 @Service
 public class TaskService {
@@ -21,8 +22,8 @@ public class TaskService {
         return taskRepository.findById(id);
     }
 
-    public void saveTask(Task task) {
-        taskRepository.save(task);
+    public Task saveTask(Task task) {
+        return taskRepository.save(task); // Devuelve la tarea guardada
     }
 
     public void deleteTask(Long id) {
