@@ -5,8 +5,8 @@ import io.swagger.v3.oas.annotations.info.Info;
 
 @OpenAPIDefinition(
     info = @Info(
-        title = "API Full",
-        description = "API para la administración de Aplicacion Gestion de Tareas",
+        title = "API Aplicacion de Gestion de Tareas",
+        description = "API para la administración de la Aplicacion de Gestion de Tareas",
         version = "v0.1.0"
     )
 )
