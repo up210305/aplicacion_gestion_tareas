@@ -1,59 +1,29 @@
-// src/components/Home.js
+import React, { useState } from 'react';
 import WbSunnyIcon from '@mui/icons-material/WbSunny';
 import StarIcon from '@mui/icons-material/Star';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import AddIcon from '@mui/icons-material/Add';
-import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
-import { Box, Card, CardContent, Grid, IconButton, Typography, InputBase, Paper, Dialog, DialogActions, DialogContent, DialogTitle, Button } from '@mui/material';
-import React, { useState } from 'react';
-import DatePicker from '@mui/lab/DatePicker';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import { Box, Card, CardContent, Grid, IconButton, Typography, InputBase, Paper } from '@mui/material';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
 const Home = () => {
-  const [taskName, setTaskName] = useState('');
-  const [selectedDate, setSelectedDate] = useState(null);
-  const [tasks, setTasks] = useState([]);
-  const [openDatePicker, setOpenDatePicker] = useState(false);
+  const [tasks, setTasks] = useState([
+    { name: 'Comprar comestibles', creationDate: '01/08/2024', dueDate: '05/08/2024' },
+    { name: 'Preparar presentación', creationDate: '02/08/2024', dueDate: '10/08/2024' },
+  ]);
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const handleAddTask = (event) => {
-    event.preventDefault();
-    const creationDate = format(new Date(), 'dd/MM/yyyy');
-    const dueDate = selectedDate ? format(selectedDate, 'dd/MM/yyyy') : 'No due date';
-
-    const newTask = {
-      name: taskName,
-      creationDate,
-      dueDate,
-    };
-
-    setTasks([...tasks, newTask]);
-    setTaskName('');
-    setSelectedDate(null);
+  const handleSearch = (event) => {
+    setSearchTerm(event.target.value);
   };
 
-  const handleEditTask = (task) => {
-    console.log(`Editando tarea: ${task.name}`);
-  };
+  const filteredTasks = tasks.filter(task =>
+    task.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleDeleteTask = (task) => {
     setTasks(tasks.filter(t => t !== task));
-    console.log(`Borrando tarea: ${task.name}`);
-  };
-
-  const handleMarkImportant = (task) => {
-    console.log(`Marcado como importante: ${task.name}`);
-  };
-
-  const handleOpenDatePicker = () => {
-    setOpenDatePicker(true);
-  };
-
-  const handleCloseDatePicker = () => {
-    setOpenDatePicker(false);
   };
 
   return (
@@ -65,7 +35,7 @@ const Home = () => {
             <Typography variant="h5" ml={1}>Today</Typography>
           </Box>
           <Grid container spacing={2}>
-            {tasks.map((task, index) => (
+            {filteredTasks.map((task, index) => (
               <Grid item xs={12} md={4} key={index}>
                 <Card>
                   <CardContent>
@@ -79,10 +49,10 @@ const Home = () => {
                       Due: {task.dueDate}
                     </Typography>
                     <Box display="flex" justifyContent="flex-end">
-                      <IconButton onClick={() => handleMarkImportant(task)}>
+                      <IconButton>
                         <StarIcon />
                       </IconButton>
-                      <IconButton onClick={() => handleEditTask(task)}>
+                      <IconButton>
                         <EditIcon />
                       </IconButton>
                       <IconButton onClick={() => handleDeleteTask(task)}>
@@ -99,8 +69,7 @@ const Home = () => {
 
       <Box sx={{ position: 'fixed', bottom: 16, left: '50%', transform: 'translateX(-50%)', width: '50%' }}>
         <Paper 
-          component="form" 
-          onSubmit={handleAddTask}
+          component="form"
           sx={{ 
             p: '2px 4px', 
             display: 'flex', 
@@ -111,38 +80,13 @@ const Home = () => {
         >
           <InputBase
             sx={{ ml: 1, flex: 1 }}
-            placeholder="Enter task name"
-            inputProps={{ 'aria-label': 'Enter task name' }}
-            value={taskName}
-            onChange={(e) => setTaskName(e.target.value)}
+            placeholder="Search tasks"
+            inputProps={{ 'aria-label': 'Search tasks' }}
+            value={searchTerm}
+            onChange={handleSearch}
           />
-          <IconButton sx={{ p: '10px' }} aria-label="select date" onClick={handleOpenDatePicker}>
-            <CalendarTodayIcon />
-          </IconButton>
-          <IconButton type="submit" sx={{ p: '10px' }} aria-label="add task">
-            <AddIcon />
-          </IconButton>
         </Paper>
       </Box>
-
-      <Dialog open={openDatePicker} onClose={handleCloseDatePicker}>
-        <DialogTitle>Select Due Date</DialogTitle>
-        <DialogContent>
-          <LocalizationProvider dateAdapter={AdapterDateFns} locale={es}>
-            <DatePicker
-              label="Due Date"
-              value={selectedDate}
-              onChange={(newValue) => setSelectedDate(newValue)}
-              renderInput={(params) => <InputBase {...params} sx={{ width: '100%' }} />}
-              inputFormat="dd/MM/yyyy"
-            />
-          </LocalizationProvider>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDatePicker}>Cancel</Button>
-          <Button onClick={handleCloseDatePicker}>OK</Button>
-        </DialogActions>
-      </Dialog>
     </Box>
   );
 }
