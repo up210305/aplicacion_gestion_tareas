@@ -11,23 +11,22 @@ import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.repository.TaskRe
 
 @Service
 public class TaskService {
-
     @Autowired
     private TaskRepository taskRepository;
 
-    public List<Task> findAll() {
+    public List<Task> getTasks() {
         return taskRepository.findAll();
     }
 
-    public Optional<Task> findById(Long id) {
+    public Optional<Task> getTask(Long id) {
         return taskRepository.findById(id);
     }
 
-    public Task save(Task task) {
-        return taskRepository.save(task);
+    public Task saveTask(Task task) {
+        return taskRepository.save(task); // Devuelve la tarea guardada
     }
 
-    public void deleteById(Long id) {
+    public void deleteTask(Long id) {
         taskRepository.deleteById(id);
     }
 }

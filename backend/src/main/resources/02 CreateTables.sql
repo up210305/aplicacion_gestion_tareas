@@ -1,5 +1,5 @@
 -- Base de datos: GESTION_TAREAS
-use GESTION_TAREAS;
+USE GESTION_TAREAS;
 
 DROP TABLE IF EXISTS tasks;
 DROP TABLE IF EXISTS employees;
@@ -30,7 +30,7 @@ CREATE TABLE tasks (
   creation_date DATE NOT NULL,
   expire_date DATE,
   completed BOOLEAN,
-  favorite BOOLEAN,
+  important BOOLEAN,
   id_employee INT(10),
   id_list INT(10),
   CONSTRAINT FK_Emp_Task FOREIGN KEY (id_employee) 
