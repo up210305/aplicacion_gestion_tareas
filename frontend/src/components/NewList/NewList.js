@@ -4,17 +4,23 @@ import axios from 'axios';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const NewList = ({ darkMode, onSave, onCancel, employeeId }) => {
+const NewList = ({ darkMode, onSave, onCancel }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const navigate = useNavigate();
 
+  // Obtener el ID del empleado del almacenamiento local
+  const employeeId = localStorage.getItem('employeeId');
+
   const handleSave = async () => {
+    if (!employeeId) {
+      console.error('Employee ID is not available');
+      return;
+    }
     try {
       const response = await axios.post(
         'http://localhost:8080/api/lists',
-        { listName: title, description }, // Envia el cuerpo de la solicitud
-        { params: { employeeId } } // Envia employeeId como parámetro de consulta
+        { listName: title, description, employeeId } // Envia el cuerpo de la solicitud
       );
       console.log('List created:', response.data); // Agrega esto si quieres ver la respuesta
       if (onSave) onSave(); // Llama al callback onSave si se proporciona
@@ -23,6 +29,7 @@ const NewList = ({ darkMode, onSave, onCancel, employeeId }) => {
       console.error('Error creating list:', error);
     }
   };
+  
 
   const handleCancel = () => {
     if (onCancel) onCancel(); // Llama al callback de cancelación si se proporciona

@@ -1,3 +1,5 @@
+use GESTION_TAREAS;
+
 -- Insertar datos en la tabla employees
 INSERT INTO employees (last_name, first_name, username, password, active) VALUES
 ('Adminson', 'Admin', 'admin', 'admin', true);

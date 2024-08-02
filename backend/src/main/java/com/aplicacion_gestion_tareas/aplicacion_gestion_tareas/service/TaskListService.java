@@ -29,14 +29,19 @@ public class TaskListService {
     }
 
     public TaskList saveTaskList(TaskList taskList, Long employeeId) {
+        // Buscar el empleado por ID
         Employee employee = employeeRepository.findById(employeeId).orElse(null);
         if (employee != null) {
+            // Asignar el empleado a la lista de tareas
             taskList.setEmployee(employee);
+            // Guardar la lista de tareas, lo que gestionará la persistencia del ID
             return taskListRepository.save(taskList);
         } else {
+            // Lanzar una excepción si el empleado no se encuentra
             throw new RuntimeException("Employee not found");
         }
-    }    
+    }
+    
 
     public void deleteTaskList(Long id) {  // Cambiado a Long
         taskListRepository.deleteById(id);

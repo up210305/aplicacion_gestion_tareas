@@ -1,6 +1,6 @@
 package com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.model;
 
-import java.sql.Date;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,19 +20,19 @@ public class Task {
     @Id
     @Column(name = "id_task")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idTask;
+    private Long id;
 
     @Column(name = "task_title", nullable = false)
-    private String taskTitle;
+    private String title;
 
     @Column(name = "task_description")
-    private String taskDescription;
+    private String description;
 
     @Column(name = "creation_date", nullable = false)
-    private Date creationDate;
+    private LocalDateTime creationDate;  // Cambiado a LocalDateTime
 
     @Column(name = "expire_date")
-    private Date expireDate;
+    private LocalDateTime expireDate;    // Cambiado a LocalDateTime
 
     @Column(name = "completed")
     private Boolean completed;
@@ -41,10 +41,10 @@ public class Task {
     private Boolean important;
 
     @ManyToOne
-    @JoinColumn(name = "id_employee", nullable = false) // Añadido nullable = false para consistencia
+    @JoinColumn(name = "id_employee", nullable = false)
     private Employee employee;
 
     @ManyToOne
-    @JoinColumn(name = "id_list", nullable = false) // Añadido nullable = false para consistencia
+    @JoinColumn(name = "id_list", nullable = false)
     private TaskList taskList;
 }

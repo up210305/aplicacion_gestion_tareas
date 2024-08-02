@@ -18,15 +18,20 @@ public class TaskList {
     @Id
     @Column(name = "id_list")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idList;
+    private Long id;
 
     @Column(name = "list_name", nullable = false)
-    private String listName;
+    private String name;
 
     @Column(name = "description")
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "id_employee", nullable = false) // Añadido nullable = false para consistencia
+    @JoinColumn(name = "id_employee", nullable = false)
     private Employee employee;
+
+    // Agrega este método si realmente necesitas modificar el ID, aunque esto es inusual
+    public void setId(Long id) {
+        this.id = id;
+    }
 }
