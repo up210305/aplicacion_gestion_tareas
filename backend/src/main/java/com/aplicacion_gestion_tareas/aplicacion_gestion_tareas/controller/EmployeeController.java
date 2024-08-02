@@ -1,6 +1,7 @@
 package com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.controller;
 
 import java.util.Optional;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.exception.ExcepcionRecursoNoEncontrado;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.model.Employee;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.service.EmployeeService;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.util.JwtUtil;
@@ -44,4 +46,18 @@ public class EmployeeController {
     public ResponseEntity<Optional<Employee>> getEmployee(@PathVariable Long id) {
         return ResponseEntity.ok(employeeService.getEmployee(id));
     }
+
+
+    @GetMapping({"/getUsername/{id}"})
+    public ResponseEntity<String> getUsername(@PathVariable Long id) throws ExcepcionRecursoNoEncontrado {
+        Optional<Employee> employeeOptional = employeeService.getEmployee(id);
+        if (employeeOptional.isPresent()) {
+            Employee employee = employeeOptional.get();
+        return ResponseEntity.ok(employee.getUsername());
+        } else {
+        throw new ExcepcionRecursoNoEncontrado("User not found");
+        }
+    }
+
+
 }

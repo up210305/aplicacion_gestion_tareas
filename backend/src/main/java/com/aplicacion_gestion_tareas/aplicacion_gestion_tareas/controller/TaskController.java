@@ -30,7 +30,7 @@ public class TaskController {
         return taskService.getTasks();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/getTask/{id}")
     public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
         Optional<Task> task = taskService.getTask(id);
         return task.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
@@ -42,7 +42,7 @@ public class TaskController {
         return new ResponseEntity<>(savedTask, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/updateTask/{id}")
     public ResponseEntity<Task> updateTask(@PathVariable Long id, @RequestBody Task task) {
         if (taskService.getTask(id).isPresent()) {
             task.setIdTask(id);
@@ -53,7 +53,7 @@ public class TaskController {
         }
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/deleteTask/{id}")
     public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
         if (taskService.getTask(id).isPresent()) {
             taskService.deleteTask(id);
