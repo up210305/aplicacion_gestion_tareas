@@ -1,6 +1,7 @@
 package com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.service;
 
 import java.util.Optional;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -41,4 +42,40 @@ public class EmployeeService {
         return employeeRepository.findIdByUsername(username);
     }
 
+    public List<String> getUsernames() {
+        return employeeRepository.findUsernames();
+    }
+
+    public Long findIdByUsername(String username) {
+        return employeeRepository.findIdByUsername(username);
+    }
+
+    public void delete(Long id) {
+        employeeRepository.deleteById(id);
+    }
+
+    public List<Employee> findActiveEmployeesByFirstNameAndLastName(String firstName, String lastName) {
+        return employeeRepository.findActiveEmployeesByFirstNameAndLastName(firstName, lastName);
+    }
+
+    public List<Object[]> countEmployeesByActiveStatus() {
+        return employeeRepository.countEmployeesByActiveStatus();
+    }
+
+    public List<Employee> findAll() {
+        return employeeRepository.findAll();
+    }
+
+    
+    public List<Employee> findActiveEmployees() {
+        return employeeRepository.findActiveEmployees();
+    }
+
+    public List<Employee> findInactiveEmployees() {
+        return employeeRepository.findInactiveEmployees();
+    }
+
+    public List<Employee> findAllOrderByLastName() {
+        return employeeRepository.findAllOrderByLastName();
+    }
 }

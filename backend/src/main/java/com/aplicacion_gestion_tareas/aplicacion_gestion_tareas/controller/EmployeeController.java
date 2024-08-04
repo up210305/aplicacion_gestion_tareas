@@ -4,7 +4,9 @@ import java.util.Optional;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -59,5 +61,54 @@ public class EmployeeController {
         }
     }
 
+    @GetMapping ({ "/getUsernames"})
+    public ResponseEntity<List<String>> getUsernames(){
+        return ResponseEntity.ok(employeeService.getUsernames());
+    }
 
+    @GetMapping({"/getEmployeeIdByUsername/{username}"})
+    public ResponseEntity<Long> getUserIdByUsername(@PathVariable String username) throws ExcepcionRecursoNoEncontrado{
+        Long idEmployee = employeeService.findIdByUsername(username);
+        if (idEmployee!=null) {
+        return ResponseEntity.ok(employeeService.findIdByUsername(username));
+        } else {
+        throw new ExcepcionRecursoNoEncontrado("Username doesn't exist");
+        }
+    }
+
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<String> delUser(@PathVariable Long id) throws ExcepcionRecursoNoEncontrado {
+        Optional<Employee> employeeToDelete = employeeService.getEmployee(id);
+        if (employeeToDelete.isPresent()) {
+        employeeService.delete(id);
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Employee " + id + " succesfully deleted");
+        } else {
+        throw new ExcepcionRecursoNoEncontrado("Employee " + id  + " not found within the database. Unable to delete");
+        }
+    }
+
+    @GetMapping("/employeesByFirstAndLastName/{firstName}/{lastName}")
+    public ResponseEntity<List<Employee>> getEmployeesByFirstAndLastName(@PathVariable String firstName, @PathVariable String lastName) {
+        return ResponseEntity.ok(employeeService.findActiveEmployeesByFirstNameAndLastName(firstName, lastName));
+    }
+
+    @GetMapping("/countEmployeesByStatus")
+    public ResponseEntity<List<Object[]>> countEmployeesByStatus() {
+        return ResponseEntity.ok(employeeService.countEmployeesByActiveStatus());
+    }
+
+    @GetMapping("/active")
+    public ResponseEntity<List<Employee>> getActiveEmployees() {
+        return ResponseEntity.ok(employeeService.findActiveEmployees());
+    }
+
+    @GetMapping("/inactive")
+    public ResponseEntity<List<Employee>> getInactiveEmployees() {
+        return ResponseEntity.ok(employeeService.findInactiveEmployees());
+    }
+
+    @GetMapping("/allOrderedByLastName")
+    public ResponseEntity<List<Employee>> getAllEmployeesOrderedByLastName() {
+        return ResponseEntity.ok(employeeService.findAllOrderByLastName());
+    }
 }

@@ -19,6 +19,7 @@ public interface EmployeeServicio {
     public List<EmployeeDTO> findAllDto();
 
     public Employee getEmployee(long employeeid)       throws ExcepcionRecursoNoEncontrado;
+
     public EmployeeDTO getEmployeeDTO(long employeeid) throws ExcepcionRecursoNoEncontrado;
 
     public Employee save(Employee data);                 // Altas
@@ -32,9 +33,22 @@ public interface EmployeeServicio {
 
     // public List<Map<String, Object>> saleByEmployee();
 
+    public List<String> getUsernames();
+
     public Employee findByUsername2 (String username);
 
     public Long findIdByUsername (String username);
 
     public List<String> findUsernames();
+
+    List<Employee> findActiveEmployeesByFirstNameAndLastName(String firstName, String lastName);
+
+    List<Object[]> countEmployeesByActiveStatus();
+
+
+    List<Employee> findActiveEmployees();
+
+    List<Employee> findInactiveEmployees();
+
+    List<Employee> findAllOrderByLastName();
 }

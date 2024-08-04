@@ -62,4 +62,19 @@ public class TaskController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @GetMapping("/completed")
+    public ResponseEntity<List<Task>> getCompletedTasks() {
+        return ResponseEntity.ok(taskService.findCompletedTasks());
+    }
+
+    @GetMapping("/employee/{idEmployee}")
+    public ResponseEntity<List<Task>> getTasksByEmployeeId(@PathVariable Long idEmployee) {
+        return ResponseEntity.ok(taskService.findTasksByEmployeeId(idEmployee));
+    }
+
+    @GetMapping("/list/{idList}")
+    public ResponseEntity<List<Task>> getTasksByListId(@PathVariable Long idList) {
+        return ResponseEntity.ok(taskService.findTasksByListId(idList));
+    }
 }

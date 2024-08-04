@@ -29,4 +29,16 @@ public class TaskService {
     public void deleteTask(Long id) {
         taskRepository.deleteById(id);
     }
+
+    public List<Task> findCompletedTasks() {
+        return taskRepository.findCompletedTasks();
+    }
+
+    public List<Task> findTasksByEmployeeId(Long idEmployee) {
+        return taskRepository.findTasksByEmployeeId(idEmployee);
+    }
+
+    public List<Task> findTasksByListId(Long idList) {
+        return taskRepository.findTasksByListId(idList);
+    }
 }
