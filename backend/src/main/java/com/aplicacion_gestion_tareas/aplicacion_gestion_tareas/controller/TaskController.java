@@ -13,48 +13,43 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.model.Task;
+import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.TaskDTO;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.service.TaskService;
 
 @RestController
 @RequestMapping("/tasks")
 public class TaskController {
-
     @Autowired
     private TaskService taskService;
 
     @GetMapping
-    public List<Task> getTasks() {
+    public List<TaskDTO> getTasks() {
         return taskService.getTasks();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Task> getTask(@PathVariable Long id) { // Cambiado a Long
-        Optional<Task> task = taskService.getTask(id);
-        if (task.isPresent()) {
-            return ResponseEntity.ok(task.get());
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+    public ResponseEntity<TaskDTO> getTask(@PathVariable Long id) {
+        Optional<TaskDTO> task = taskService.getTask(id);
+        return task.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/list/{listId}")
-    public List<Task> getTasksByListId(@PathVariable Long listId) { // Cambiado a Long
+    public List<TaskDTO> getTasksByListId(@PathVariable Long listId) {
         return taskService.getTasksByListId(listId);
     }
 
     @GetMapping("/no-list")
-    public List<Task> getTasksWithoutListId() {
+    public List<TaskDTO> getTasksWithoutListId() {
         return taskService.getTasksWithoutListId();
     }
 
     @PostMapping
-    public Task createTask(@RequestBody Task task) {
-        return taskService.saveTask(task);
+    public TaskDTO createTask(@RequestBody TaskDTO taskDTO) {
+        return taskService.saveTask(taskDTO);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteTask(@PathVariable Long id) { // Cambiado a Long
+    public void deleteTask(@PathVariable Long id) {
         taskService.deleteTask(id);
     }
 }

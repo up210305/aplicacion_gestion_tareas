@@ -2,41 +2,50 @@ package com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.TaskDTO;
+import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.mapper.TaskMapper;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.model.Task;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.repository.TaskRepository;
 
 @Service
 public class TaskService {
-
     @Autowired 
     private TaskRepository taskRepository;
 
-    public List<Task> getTasks() { 
-        return taskRepository.findAll(); 
+    public List<TaskDTO> getTasks() { 
+        return taskRepository.findAll().stream()
+                .map(TaskMapper.INSTANCE::toTaskDTO)
+                .collect(Collectors.toList());
     }
 
-    public Optional<Task> getTask(Long id) {  // Cambiado a Long
-        return taskRepository.findById(id);
+    public Optional<TaskDTO> getTask(Long id) {
+        return taskRepository.findById(id).map(TaskMapper.INSTANCE::toTaskDTO);
     }
 
-    public List<Task> getTasksByListId(Long listId) {
-        return taskRepository.findByTaskListId(listId);  // Cambiado al nombre correcto del método
+    public List<TaskDTO> getTasksByListId(Long listId) {
+        return taskRepository.findByTaskListId(listId).stream()
+                .map(TaskMapper.INSTANCE::toTaskDTO)
+                .collect(Collectors.toList());
     }
 
-    public List<Task> getTasksWithoutListId() {
-        // Implementar si es necesario
-        return null;
+    public List<TaskDTO> getTasksWithoutListId() {
+        return taskRepository.findByTaskListIdIsNull().stream()
+                .map(TaskMapper.INSTANCE::toTaskDTO)
+                .collect(Collectors.toList());
     }
 
-    public Task saveTask(Task task) { 
-        return taskRepository.save(task); 
+    public TaskDTO saveTask(TaskDTO taskDTO) {
+        Task task = TaskMapper.INSTANCE.toTask(taskDTO);
+        Task savedTask = taskRepository.save(task);
+        return TaskMapper.INSTANCE.toTaskDTO(savedTask);
     }
 
-    public void deleteTask(Long id) {  // Cambiado a Long
+    public void deleteTask(Long id) {
         taskRepository.deleteById(id);
     }
 }

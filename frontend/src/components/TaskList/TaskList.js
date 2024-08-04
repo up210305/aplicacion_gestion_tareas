@@ -1,8 +1,23 @@
 import { Bookmark, Delete, Edit } from '@mui/icons-material';
-import { Alert, Box, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, ListItem, ListItemText, List as MUIList, Snackbar, Typography } from '@mui/material';
+import {
+  Alert,
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  IconButton,
+  ListItem,
+  ListItemText,
+  List as MUIList,
+  Snackbar,
+  Typography
+} from '@mui/material';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom'; // Asegúrate de importar useParams
+import { useParams } from 'react-router-dom';
 import AddTask from '../AddTask';
 import Aside from '../Aside';
 
@@ -18,20 +33,29 @@ const TaskItem = ({ task, onToggleImportant, onDelete, onEdit, darkMode }) => (
     }}
   >
     <Box>
-      <ListItemText 
+      <ListItemText
         primary={task.task_title}
         secondary={`Created: ${task.creation_date} | Due: ${task.expire_date || 'N/A'}`}
         sx={{ color: darkMode ? 'white' : 'inherit' }}
       />
     </Box>
     <Box>
-      <IconButton onClick={() => onToggleImportant(task)} sx={{ color: task.important ? '#1976d2' : darkMode ? '#fff' : 'rgba(0, 0, 0, 0.54)' }}>
+      <IconButton
+        onClick={() => onToggleImportant(task)}
+        sx={{ color: task.important ? '#1976d2' : darkMode ? '#fff' : 'rgba(0, 0, 0, 0.54)' }}
+      >
         <Bookmark />
       </IconButton>
-      <IconButton onClick={() => onDelete(task)} sx={{ color: darkMode ? '#f44336' : 'rgba(0, 0, 0, 0.54)' }}>
+      <IconButton
+        onClick={() => onDelete(task)}
+        sx={{ color: darkMode ? '#f44336' : 'rgba(0, 0, 0, 0.54)' }}
+      >
         <Delete />
       </IconButton>
-      <IconButton onClick={() => onEdit(task.id_task)} sx={{ color: darkMode ? '#1976d2' : 'rgba(0, 0, 0, 0.54)' }}>
+      <IconButton
+        onClick={() => onEdit(task.id_task)}
+        sx={{ color: darkMode ? '#1976d2' : 'rgba(0, 0, 0, 0.54)' }}
+      >
         <Edit />
       </IconButton>
     </Box>
@@ -50,19 +74,29 @@ const TaskList = ({ darkMode }) => {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = listId 
-          ? await axios.get(`http://localhost:8080/api/lists/${listId}/tasks`) 
-          : await axios.get('http://localhost:8080/api/tasks/no-list');
-        setTasks(response.data);
+        if (listId) {
+          const response = await axios.get(`http://localhost:8080/api/lists/${listId}/tasks`);
+          setTasks(response.data);
+        } else {
+          const response = await axios.get('http://localhost:8080/api/tasks/no-list');
+          setTasks(response.data);
+        }
       } catch (error) {
         console.error('Error fetching tasks:', error);
       }
     };
 
-    fetchTasks();
+    if (listId) {
+      fetchTasks();
+    }
   }, [listId]);
 
   const handleToggleImportant = async (task) => {
+    if (!task || !task.id_task) {
+      console.error('Invalid task:', task);
+      return;
+    }
+
     try {
       await axios.patch(`http://localhost:8080/api/tasks/${task.id_task}`, { important: !task.important });
       task.important = !task.important;
@@ -134,7 +168,7 @@ const TaskList = ({ darkMode }) => {
         <MUIList sx={{ backgroundColor: darkMode ? '#333' : 'white', color: darkMode ? 'white' : 'inherit', borderRadius: '4px', padding: '10px', paddingBottom: '70px' /* Extra padding for Add Task bar */ }}>
           {tasks.map((task) => (
             <TaskItem
-              key={task.id_task}
+              key={task.id_task} // Asegúrate de que cada elemento tenga una clave única
               task={task}
               onToggleImportant={handleToggleImportant}
               onDelete={handleDelete}

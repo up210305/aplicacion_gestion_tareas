@@ -8,11 +8,11 @@ import { Route, Routes, useLocation } from 'react-router-dom';
 import Aside from '../Aside'; // Import the Aside component
 import Home from '../Home';
 import ImportantTasks from '../ImportantTasks/ImportantTasks'; // Ruta corregida
-import List from '../List'; // Import List component
 import NewList from '../NewList';
 import QList from '../QList';
 import SignIn from '../SignIn';
 import SignUp from '../SignUp';
+import TaskList from '../TaskList'; // Import List component
 
 function Main() {
   const [darkMode, setDarkMode] = useState(() => {
@@ -52,8 +52,7 @@ function Main() {
             <Route path="/importanttasks" element={<ImportantTasks darkMode={darkMode} />} />
             <Route path="/new-list" element={<NewList darkMode={darkMode} />} />
             <Route path="/home" element={<Home />} />
-            <Route path="/list/:listId" element={<List darkMode={darkMode} />} /> {/* Ensure this route matches */}
-            <Route path="/tasks/:listId" element={<List darkMode={darkMode} />} /> {/* Ensure this route matches */}
+            <Route path="/list/:listId" element={<TaskList darkMode={darkMode} />} /> {/* Ensure this route matches */}
           </Routes>
         </Box>
       </Box>

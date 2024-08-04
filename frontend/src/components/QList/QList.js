@@ -42,7 +42,7 @@ const QList = ({ darkMode }) => {
         description,
       });
       const newList = response.data;
-      setLists([...lists, newList]);
+      setLists((prevLists) => [...prevLists, newList]);
       setShowNewList(false);
     } catch (error) {
       console.error("Error adding list:", error);
@@ -50,9 +50,9 @@ const QList = ({ darkMode }) => {
   };
 
   // Handle clicking on a list item
-const handleListClick = (listId) => {
-  navigate(`/list/${listId}`); // Navega a la ruta que contiene el listId
-};
+  const handleListClick = (listId) => {
+    navigate(`/list/${listId}`); // Navega a la ruta que contiene el listId
+  };
 
   return (
     <Box
