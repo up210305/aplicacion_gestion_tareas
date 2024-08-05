@@ -2,6 +2,7 @@ package com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.service;
 
 import java.util.Optional;
 import java.util.List;
+import lombok.Builder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.CreateEmployeeDTO;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.exception.ExcepcionRecursoNoEncontrado;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.model.Employee;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.service.EmployeeService;
@@ -19,6 +21,10 @@ public class EmployeeService {
 
     @Autowired
     private EmployeeRepository employeeRepository;
+
+    public EmployeeService(EmployeeRepository employeeRepository) {
+        this.employeeRepository = employeeRepository;
+    }
 
 
     public Employee registerEmployee(Employee employee) {
@@ -32,6 +38,21 @@ public class EmployeeService {
             return employeeOpt;
         }
         return Optional.empty();
+    }
+
+    public Optional<Employee> loginEmployeeDTO(String username, String password) {
+        return employeeRepository.findByUsernameAndPassword(username, password);
+    }
+
+    public Employee createEmployee(CreateEmployeeDTO createEmployeeDTO) {
+        Employee newEmployee = Employee.builder()
+                .lastName(createEmployeeDTO.getLastName())
+                .firstName(createEmployeeDTO.getFirstName())
+                .username(createEmployeeDTO.getUsername())
+                .password(createEmployeeDTO.getPassword())
+                .active(createEmployeeDTO.isActive())
+                .build();
+        return employeeRepository.save(newEmployee);
     }
 
     public Optional<Employee> getEmployee(Long id) {

@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.CreateEmployeeDTO;
+import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.EmployeeLoginDTO;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.exception.ExcepcionRecursoNoEncontrado;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.model.Employee;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.service.EmployeeService;
@@ -42,6 +44,25 @@ public class EmployeeController {
                     return ResponseEntity.ok("{\"token\":\"" + token + "\", \"userId\":\"" + employee.getIdEmployee() + "\"}");
                 })
                 .orElseGet(() -> ResponseEntity.status(401).body("{\"message\": \"Invalid credentials\"}"));
+    }
+
+    @PostMapping("/loginDTO")
+    public ResponseEntity<String> loginEmployeeWithDTO(@RequestBody EmployeeLoginDTO loginRequest) {
+        return employeeService.loginEmployee(loginRequest.getUsername(), loginRequest.getPassword())
+                .map(employee -> {
+                    // Generar el token JWT usando el ID del empleado autenticado
+                    String token = JwtUtil.generateToken(employee.getIdEmployee());
+                    // Retornar el token en formato JSON
+                    return ResponseEntity.ok("{\"token\":\"" + token + "\", \"userId\":\"" + employee.getIdEmployee() + "\"}");
+                })
+                .orElseGet(() -> ResponseEntity.status(401).body("{\"message\": \"Invalid credentials\"}"));
+    }
+
+    // Método para crear un empleado usando CreateEmployeeDTO
+    @PostMapping("/createEmployeeDTO")
+    public ResponseEntity<Employee> createEmployee(@RequestBody CreateEmployeeDTO createEmployeeDTO) {
+        Employee createdEmployee = employeeService.createEmployee(createEmployeeDTO);
+        return ResponseEntity.ok(createdEmployee);
     }
 
     @GetMapping("/getEmployee/{id}")

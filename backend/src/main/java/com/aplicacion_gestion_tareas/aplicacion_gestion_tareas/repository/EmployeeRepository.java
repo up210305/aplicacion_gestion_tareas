@@ -12,6 +12,8 @@ import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.model.Employee;
 public interface EmployeeRepository extends JpaRepository<Employee, Long> {
     Optional<Employee> findByUsername(String username);
 
+    Optional<Employee> findByUsernameAndPassword(String username, String password);
+
     @Query(value = "SELECT * FROM employees WHERE username = ?1", nativeQuery = true)
     Employee findByUsername2(String username);
 

@@ -3,6 +3,7 @@ package com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.service;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.CreateEmployeeDTO;
@@ -13,6 +14,10 @@ import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.model.Employee;
 import jakarta.validation.Valid;
 
 public interface EmployeeServicio {
+
+    Optional<Employee> loginEmployeeDTO(String username, String password);
+
+    Employee createEmployee(CreateEmployeeDTO createEmployeeDTO);
 
     public List<Employee> findAll();
 
