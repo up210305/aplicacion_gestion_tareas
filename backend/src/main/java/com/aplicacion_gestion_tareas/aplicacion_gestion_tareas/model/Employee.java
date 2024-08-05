@@ -3,7 +3,8 @@ package com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
-
+import lombok.Builder;
+@Builder
 @Data
 @Entity
 @Table(name = "employees")
@@ -29,5 +30,5 @@ public class Employee {
   private String password;
   
   private boolean active;
- 
+
 }

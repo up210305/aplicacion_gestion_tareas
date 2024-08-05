@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.TaskDTO;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.model.Task;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.service.TaskService;
 
@@ -36,10 +37,16 @@ public class TaskController {
         return task.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    @PostMapping
+    @PostMapping("/createTask")
     public ResponseEntity<Task> createTask(@RequestBody Task task) {
         Task savedTask = taskService.saveTask(task);
         return new ResponseEntity<>(savedTask, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/createTaskDTO")
+    public ResponseEntity<Task> createTask(@RequestBody TaskDTO taskDTO) {
+        Task createdTask = taskService.saveTaskDTO(taskDTO);
+        return ResponseEntity.ok(createdTask);
     }
 
     @PutMapping("/updateTask/{id}")
