@@ -25,7 +25,7 @@ const TaskItem = ({ task, onToggleImportant, onDelete, onEdit, darkMode }) => (
     sx={{
       display: "flex",
       justifyContent: "space-between",
-      backgroundColor: darkMode ? "#333" : "white",
+      backgroundColor: darkMode ? "rgb(129,165,202)" : "#ccc", // Specific shading color for task items
       marginBottom: "10px",
       borderRadius: "4px",
       color: darkMode ? "white" : "inherit",
@@ -167,7 +167,7 @@ const TaskList = ({ darkMode }) => {
     <Box sx={{ flex: 1, p: 2, display: "flex", flexDirection: "column" }}>
       <Box
         sx={{
-          backgroundColor: darkMode ? "#333" : "white",
+          backgroundColor: darkMode ? "rgb(60,101,156)" : "#e0e0e0", // General shading color
           color: darkMode ? "white" : "inherit",
           borderRadius: "4px",
           padding: "10px",
@@ -189,7 +189,7 @@ const TaskList = ({ darkMode }) => {
       >
         <MUIList
           sx={{
-            backgroundColor: darkMode ? "#333" : "white",
+            backgroundColor: darkMode ? "rgb(60,101,156)" : "#e0e0e0", // General shading color
             color: darkMode ? "white" : "inherit",
             borderRadius: "4px",
             padding: "10px",
@@ -198,7 +198,7 @@ const TaskList = ({ darkMode }) => {
         >
           {tasks.map((task) => (
             <TaskItem
-              key={task.id_task} // Asegúrate de que esta propiedad es única
+              key={task.id_task} // Ensure this property is unique
               task={task}
               onToggleImportant={handleToggleImportant}
               onDelete={handleDelete}

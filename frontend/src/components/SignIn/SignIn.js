@@ -17,8 +17,23 @@ import zglogo from '../../assets/images/zglogo.png';
 
 // Styled components
 const StyledContainer = styled(Container)(({ theme }) => ({
-  backgroundColor: theme.palette.background.default,
-  color: theme.palette.text.primary,
+  height: '100vh',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  overflow: 'hidden',
+  backgroundColor: theme.palette.mode === 'dark'
+    ? 'rgba(15, 41, 91, 255)' // Dark mode blue
+    : 'rgba(0, 48, 135, 255)', // Light mode blue
+}));
+
+const StyledBox = styled(Box)(({ theme }) => ({
+  backgroundColor: theme.palette.mode === 'dark' ? 'rgba(33, 43, 53, 0.9)' : 'white',
+  borderRadius: '8px',
+  padding: theme.spacing(3),
+  maxWidth: '400px',
+  width: '100%',
+  textAlign: 'center',
 }));
 
 const StyledAvatar = styled(Box)(({ theme }) => ({
@@ -29,6 +44,7 @@ const StyledAvatar = styled(Box)(({ theme }) => ({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
+  margin: '0 auto',
 }));
 
 export default function SignIn() {
@@ -44,19 +60,15 @@ export default function SignIn() {
     };
     
     try {
-      // Make an HTTP request to your backend for authentication
       const response = await axios.post('http://localhost:8080/api/auth/login', credentials);
       console.log(response.data);
 
-      // Store token and employeeId in local storage
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('employeeId', response.data.employeeId);
       
-      // If authentication is successful, navigate to the home page
       navigate('/home');
     } catch (error) {
       console.error('Error logging in:', error);
-      // Handle error (e.g., show error message)
       alert('Error logging in. Please check your username and password.');
     }
   };
@@ -64,15 +76,14 @@ export default function SignIn() {
   return (
     <StyledContainer component="main" maxWidth="xs">
       <CssBaseline />
-      <Box className="container">
-        <StyledAvatar className="avatar">
-          {/* Use the zglogo image instead of the icon */}
+      <StyledBox>
+        <StyledAvatar>
           <img src={zglogo} alt="Zegucom Logo" style={{ width: '100%', height: '100%' }} />
         </StyledAvatar>
-        <Typography component="h1" variant="h5">
+        <Typography component="h1" variant="h5" sx={{ mt: 2 }}>
           Sign in
         </Typography>
-        <Box component="form" onSubmit={handleSubmit} noValidate className="form">
+        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 3 }}>
           <TextField
             margin="normal"
             required
@@ -97,11 +108,11 @@ export default function SignIn() {
             type="submit"
             fullWidth
             variant="contained"
-            className="submit"
+            sx={{ mt: 2 }}
           >
             Sign In
           </Button>
-          <Grid container>
+          <Grid container sx={{ mt: 2 }}>
             <Grid item xs></Grid>
             <Grid item>
               <Link component={RouterLink} to="/signup" variant="body2">
@@ -110,7 +121,7 @@ export default function SignIn() {
             </Grid>
           </Grid>
         </Box>
-      </Box>
+      </StyledBox>
     </StyledContainer>
   );
 }

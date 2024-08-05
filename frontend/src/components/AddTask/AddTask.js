@@ -21,9 +21,9 @@ const AddTask = ({ darkMode, onAddTask }) => {
         display: 'flex',
         alignItems: 'center',
         padding: '8px 16px',
-        backgroundColor: darkMode ? '#222' : '#f5f5f5',
-        boxShadow: '0 -1px 5px rgba(0, 0, 0, 0.1)',
-        borderRadius: '12px',
+        backgroundColor: darkMode ? 'rgb(60,101,156)' : '#e0e0e0', // Match general shading
+        boxShadow: darkMode ? '0 2px 5px rgba(0, 0, 0, 0.2)' : '0 2px 5px rgba(0, 0, 0, 0.1)',
+        borderRadius: '4px',
         position: 'relative',
         marginTop: '10px',
       }}
@@ -36,7 +36,7 @@ const AddTask = ({ darkMode, onAddTask }) => {
         sx={{
           flexGrow: 1,
           marginRight: '8px',
-          backgroundColor: darkMode ? '#333' : '#fff',
+          backgroundColor: darkMode ? 'rgb(129,165,202)' : '#fff', // Match specific shading
           borderRadius: '4px',
         }}
         InputProps={{

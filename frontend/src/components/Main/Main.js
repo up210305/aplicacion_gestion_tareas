@@ -1,4 +1,4 @@
-import { Brightness4, Logout, WbSunny } from "@mui/icons-material";
+import { ArrowBack, Brightness4, Logout, WbSunny } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
 import IconButton from "@mui/material/IconButton";
@@ -44,7 +44,6 @@ function Main() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        // Cambia el ID de 1 al ID del usuario actualmente autenticado
         const response = await axios.get(`/api/employee/${localStorage.getItem('employeeId')}`);
         setUser({
           firstName: response.data.firstName,
@@ -69,6 +68,10 @@ function Main() {
     navigate("/");
   };
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
   const commonButtonStyles = {
     borderRadius: "4px",
     "&:hover": {
@@ -81,10 +84,20 @@ function Main() {
     },
   };
 
+  const isSignInOrSignUp = ["/", "/signup"].includes(location.pathname);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Box sx={{ display: "flex", height: "100vh" }}>
+      <Box 
+        sx={{ 
+          display: "flex", 
+          flexDirection: "column", 
+          height: "100vh", 
+          backgroundColor: isSignInOrSignUp ? (darkMode ? 'rgba(15,41,91,255)' : 'rgba(0,48,135,255)') : (darkMode ? 'rgba(31,43,57,255)' : 'inherit'),
+          overflow: "hidden",
+        }}
+      >
         {showAside && <Aside 
           firstName={user.firstName} 
           lastName={user.lastName} 
@@ -94,43 +107,56 @@ function Main() {
           sx={{
             flex: 1,
             p: 2,
-            ml: showAside ? "250px" : "0", // Ajusta el margen izquierdo si el Aside está visible
+            ml: showAside ? "250px" : "0",
             display: "flex",
             flexDirection: "column",
+            backgroundColor: 'inherit',
           }}
         >
           <Box
             sx={{
               display: "flex",
-              justifyContent: "flex-end",
+              justifyContent: "space-between",
               alignItems: "center",
               mb: 2,
             }}
           >
-            <IconButton
-              onClick={handleSignOut}
-              sx={commonButtonStyles}
-            >
-              <Logout />
-            </IconButton>
-            <IconButton
-              onClick={() => setDarkMode(!darkMode)}
-              color="inherit"
-              sx={commonButtonStyles}
-            >
-              {darkMode ? <WbSunny /> : <Brightness4 />}
-            </IconButton>
+            {!isSignInOrSignUp && (
+              <IconButton
+                onClick={handleBack}
+                sx={commonButtonStyles}
+              >
+                <ArrowBack />
+              </IconButton>
+            )}
+            <Box sx={{ display: "flex", alignItems: "center" }}>
+              {!isSignInOrSignUp && (
+                <IconButton
+                  onClick={handleSignOut}
+                  sx={commonButtonStyles}
+                >
+                  <Logout />
+                </IconButton>
+              )}
+              <IconButton
+                onClick={() => setDarkMode(!darkMode)}
+                color="inherit"
+                sx={commonButtonStyles}
+              >
+                {darkMode ? <WbSunny /> : <Brightness4 />}
+              </IconButton>
+            </Box>
           </Box>
           <Routes>
-            <Route path="/" element={<SignIn darkMode={darkMode} />} />
-            <Route path="/signup" element={<SignUp darkMode={darkMode} />} />
+            <Route path="/" element={<SignIn />} />
+            <Route path="/signup" element={<SignUp />} />
             <Route path="/list" element={<QList darkMode={darkMode} />} />
-            <Route path="/home" element={<Home darkMode={darkMode} />} />
+            <Route path="/home" element={<Home />} />
             <Route
               path="/importanttasks"
-              element={<ImportantTasks darkMode={darkMode} />}
+              element={<ImportantTasks />}
             />
-            <Route path="/new-list" element={<NewList darkMode={darkMode} />} />
+            <Route path="/new-list" element={<NewList />} />
             <Route
               path="/list/:listId/tasks"
               element={<TaskList darkMode={darkMode} />}

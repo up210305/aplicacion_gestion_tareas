@@ -3,7 +3,7 @@ import { Box, IconButton, List, ListItem, ListItemText, Typography } from '@mui/
 import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import NewList from '../NewList'; // Asegúrate de que este import sea correcto
+import NewList from '../NewList';
 
 const QList = ({ darkMode }) => {
   const [lists, setLists] = useState([]);
@@ -47,14 +47,15 @@ const QList = ({ darkMode }) => {
     <Box
       sx={{
         padding: '16px',
-        backgroundColor: darkMode ? '#222' : '#f5f5f5',
+        backgroundColor: darkMode ? 'rgb(60,101,156)' : '#f5f5f5',
         borderRadius: '12px',
+        color: darkMode ? 'white' : 'inherit',
       }}
     >
       <Typography
         variant="h4"
         gutterBottom
-        sx={{ color: darkMode ? '#fff' : '#000' }}
+        sx={{ color: darkMode ? 'white' : 'inherit' }}
       >
         My Lists
       </Typography>
@@ -63,9 +64,10 @@ const QList = ({ darkMode }) => {
           <ListItem
             key={list.id}
             sx={{
-              backgroundColor: darkMode ? '#333' : '#fff',
+              backgroundColor: darkMode ? '#81a5ca' : '#fff',
               marginBottom: '10px',
               borderRadius: '4px',
+              color: darkMode ? 'white' : 'inherit',
             }}
             button
             onClick={() => handleListClick(list.id)}
@@ -73,14 +75,13 @@ const QList = ({ darkMode }) => {
             <ListItemText
               primary={list.name}
               secondary={list.description}
-              sx={{ color: darkMode ? '#fff' : '#000' }}
+              sx={{ color: darkMode ? 'white' : 'inherit' }}
             />
           </ListItem>
         ))}
       </List>
       {showNewList ? (
         <NewList
-          darkMode={darkMode}
           onSave={(title, description) => handleAddList(title, description)}
           onCancel={() => setShowNewList(false)}
         />

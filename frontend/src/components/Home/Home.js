@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
-import WbSunnyIcon from '@mui/icons-material/WbSunny';
-import StarIcon from '@mui/icons-material/Star';
-import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Box, Card, CardContent, Grid, IconButton, Typography, InputBase, Paper } from '@mui/material';
-import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
+import EditIcon from '@mui/icons-material/Edit';
+import StarIcon from '@mui/icons-material/Star';
+import WbSunnyIcon from '@mui/icons-material/WbSunny';
+import { Box, Card, CardContent, Grid, IconButton, InputBase, Paper, Typography } from '@mui/material';
+import React, { useState } from 'react';
 
 const Home = () => {
   const [tasks, setTasks] = useState([
@@ -27,7 +25,15 @@ const Home = () => {
   };
 
   return (
-    <Box sx={{ padding: 4, height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+    <Box 
+      sx={{ 
+        padding: 4, 
+        height: '100vh', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        justifyContent: 'space-between'
+      }}
+    >
       <Box>
         <Grid item xs={12}>
           <Box display="flex" alignItems="center" mb={2}>
