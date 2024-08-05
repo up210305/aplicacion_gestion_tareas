@@ -18,9 +18,9 @@ import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.TaskDTO;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.TaskListDTO;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.service.TaskListService;
 
-@CrossOrigin(origins = "http://localhost:3000")  // Ajusta el origen según sea necesario
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
-@RequestMapping("/api/lists")  // Asegúrate de que la ruta base es correcta
+@RequestMapping("/api/lists")
 public class TaskListController {
 
     @Autowired
@@ -38,6 +38,13 @@ public class TaskListController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(tasks);
+    }
+
+    @GetMapping("/{listId}")
+    public ResponseEntity<TaskListDTO> getTaskListById(@PathVariable Long listId) {
+        return taskListService.getTaskListById(listId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping

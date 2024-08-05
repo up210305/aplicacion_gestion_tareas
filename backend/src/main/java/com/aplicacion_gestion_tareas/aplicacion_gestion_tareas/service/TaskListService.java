@@ -44,7 +44,7 @@ public class TaskListService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<TaskListDTO> getTaskList(Long id) {
+    public Optional<TaskListDTO> getTaskListById(Long id) {
         return taskListRepository.findById(id)
                 .map(taskListMapper::toTaskListDTO);
     }

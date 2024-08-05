@@ -1,18 +1,19 @@
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
-import { useTheme } from '@mui/material/styles';
+import { useTheme } from '@mui/material/styles'; // Import useTheme
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/system';
 import axios from 'axios'; // Import axios for HTTP requests
 import React from 'react';
-import { Link as RouterLink, useNavigate } from 'react-router-dom'; // Import Link and useNavigate from react-router-dom
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
+
+// Import the zglogo image
+import zglogo from '../../assets/images/zglogo.png'; // Update the path if necessary
 
 import './SignIn.css';
 
@@ -22,12 +23,18 @@ const StyledContainer = styled(Container)(({ theme }) => ({
   color: theme.palette.text.primary,
 }));
 
-const StyledAvatar = styled(Avatar)(({ theme }) => ({
+const StyledAvatar = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.secondary.main,
+  borderRadius: '50%',
+  width: 60,
+  height: 60,
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
 }));
 
 export default function SignIn() {
-  const theme = useTheme();
+  const theme = useTheme(); // Use useTheme here
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
@@ -61,7 +68,8 @@ export default function SignIn() {
       <CssBaseline />
       <Box className="container">
         <StyledAvatar className="avatar">
-          <LockOutlinedIcon />
+          {/* Use the zglogo image instead of the icon */}
+          <img src={zglogo} alt="Zegucom Logo" style={{ width: '100%', height: '100%' }} />
         </StyledAvatar>
         <Typography component="h1" variant="h5">
           Sign in

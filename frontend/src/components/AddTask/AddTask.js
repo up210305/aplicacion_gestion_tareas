@@ -1,7 +1,6 @@
-// src/components/AddTask/AddTask.js
-import React, { useState } from 'react';
-import { Box, TextField, IconButton, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
 import { Add, CalendarToday, Cancel } from '@mui/icons-material';
+import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TextField } from '@mui/material';
+import React, { useState } from 'react';
 
 const AddTask = ({ darkMode, onAddTask }) => {
   const [taskName, setTaskName] = useState('');
@@ -25,11 +24,8 @@ const AddTask = ({ darkMode, onAddTask }) => {
         backgroundColor: darkMode ? '#222' : '#f5f5f5',
         boxShadow: '0 -1px 5px rgba(0, 0, 0, 0.1)',
         borderRadius: '12px',
-        position: 'fixed',
-        bottom: '0',
-        left: '240px', // Adjust based on the width of the aside component
-        right: '0',
-        margin: '10px',
+        position: 'relative',
+        marginTop: '10px',
       }}
     >
       <TextField
