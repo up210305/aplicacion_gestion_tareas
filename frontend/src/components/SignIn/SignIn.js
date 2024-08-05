@@ -4,18 +4,16 @@ import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
-import { useTheme } from '@mui/material/styles'; // Import useTheme
+import { useTheme } from '@mui/material/styles';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/system';
-import axios from 'axios'; // Import axios for HTTP requests
+import axios from 'axios';
 import React from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 // Import the zglogo image
-import zglogo from '../../assets/images/zglogo.png'; // Update the path if necessary
-
-import './SignIn.css';
+import zglogo from '../../assets/images/zglogo.png';
 
 // Styled components
 const StyledContainer = styled(Container)(({ theme }) => ({
@@ -34,7 +32,7 @@ const StyledAvatar = styled(Box)(({ theme }) => ({
 }));
 
 export default function SignIn() {
-  const theme = useTheme(); // Use useTheme here
+  const theme = useTheme();
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {

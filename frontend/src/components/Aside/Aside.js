@@ -52,7 +52,7 @@ const Aside = ({ firstName, lastName, username }) => {
             </ListItemIcon>
             <ListItemText primary="Home" sx={{ color: 'white' }} />
           </ListItem>
-          <ListItem button onClick={() => navigate(`/tasks/1`)}>
+          <ListItem button onClick={() => navigate('/tasks/1')}>
             <ListItemIcon>
               <CheckBox sx={{ color: 'white' }} />
             </ListItemIcon>

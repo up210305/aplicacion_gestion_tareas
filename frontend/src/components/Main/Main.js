@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
 import IconButton from "@mui/material/IconButton";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import axios from 'axios'; // Asegúrate de tener axios instalado
+import axios from 'axios';
 import React, { useEffect, useMemo, useState } from "react";
 import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Aside from "../Aside";
@@ -69,6 +69,18 @@ function Main() {
     navigate("/");
   };
 
+  const commonButtonStyles = {
+    borderRadius: "4px",
+    "&:hover": {
+      boxShadow: (theme) =>
+        `0 4px 8px ${
+          theme.palette.mode === "dark"
+            ? "rgba(255, 255, 255, 0.5)"
+            : "rgba(0, 0, 0, 0.2)"
+        }`,
+    },
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -97,21 +109,15 @@ function Main() {
           >
             <IconButton
               onClick={handleSignOut}
-              sx={{
-                borderRadius: "4px",
-                "&:hover": {
-                  boxShadow: (theme) =>
-                    `0 4px 8px ${
-                      theme.palette.mode === "dark"
-                        ? "rgba(255, 255, 255, 0.5)"
-                        : "rgba(0, 0, 0, 0.2)"
-                    }`,
-                },
-              }}
+              sx={commonButtonStyles}
             >
               <Logout />
             </IconButton>
-            <IconButton onClick={() => setDarkMode(!darkMode)} color="inherit">
+            <IconButton
+              onClick={() => setDarkMode(!darkMode)}
+              color="inherit"
+              sx={commonButtonStyles}
+            >
               {darkMode ? <WbSunny /> : <Brightness4 />}
             </IconButton>
           </Box>
