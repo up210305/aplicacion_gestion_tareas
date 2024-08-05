@@ -1,25 +1,35 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import WbSunnyIcon from '@mui/icons-material/WbSunny';
 import StarIcon from '@mui/icons-material/Star';
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Box, Card, CardContent, Grid, IconButton, Typography, InputBase, Paper } from '@mui/material';
-import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
+import { fetchTasks } from '../../services/taskService';
 
 const Home = () => {
-  const [tasks, setTasks] = useState([
-    { name: 'Comprar comestibles', creationDate: '01/08/2024', dueDate: '05/08/2024' },
-    { name: 'Preparar presentación', creationDate: '02/08/2024', dueDate: '10/08/2024' },
-  ]);
+  const [tasks, setTasks] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    const getTasks = async () => {
+      try {
+        const tasksData = await fetchTasks();
+        setTasks(tasksData);
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+      }
+    };
+
+    getTasks();
+  }, []);
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
 
+
   const filteredTasks = tasks.filter(task =>
-    task.name.toLowerCase().includes(searchTerm.toLowerCase())
+    task.taskTitle.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleDeleteTask = (task) => {
@@ -40,13 +50,13 @@ const Home = () => {
                 <Card>
                   <CardContent>
                     <Typography variant="body2" color="textSecondary">
-                      {task.name}
+                      {task.taskTitle}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
                       Created: {task.creationDate}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
-                      Due: {task.dueDate}
+                      Due: {task.expireDate}
                     </Typography>
                     <Box display="flex" justifyContent="flex-end">
                       <IconButton>
