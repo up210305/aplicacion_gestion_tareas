@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,6 +19,7 @@ import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.service.TaskServi
 
 @RestController
 @RequestMapping("/tasks")
+@CrossOrigin(origins = "http://localhost:3000") // Cambia esto a la URL de tu frontend
 public class TaskController {
     @Autowired
     private TaskService taskService;
@@ -34,8 +36,9 @@ public class TaskController {
     }
 
     @GetMapping("/list/{listId}")
-    public List<TaskDTO> getTasksByListId(@PathVariable Long listId) {
-        return taskService.getTasksByListId(listId);
+    public ResponseEntity<List<TaskDTO>> getTasksByListId(@PathVariable Long listId) {
+        List<TaskDTO> tasks = taskService.getTasksByListId(listId);
+        return ResponseEntity.ok(tasks);
     }
 
     @GetMapping("/no-list")

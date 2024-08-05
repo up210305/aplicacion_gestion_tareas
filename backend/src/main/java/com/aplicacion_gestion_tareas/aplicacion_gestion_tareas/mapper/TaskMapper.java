@@ -7,7 +7,7 @@ import org.mapstruct.factory.Mappers;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.TaskDTO;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.model.Task;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface TaskMapper {
     TaskMapper INSTANCE = Mappers.getMapper(TaskMapper.class);
 

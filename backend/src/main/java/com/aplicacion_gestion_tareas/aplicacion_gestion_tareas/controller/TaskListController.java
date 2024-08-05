@@ -1,7 +1,6 @@
 package com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.controller;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.TaskDTO;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.TaskListDTO;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.service.TaskListService;
 
@@ -31,10 +31,13 @@ public class TaskListController {
         return taskListService.getTaskLists();
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<TaskListDTO> getTaskListById(@PathVariable Long id) {
-        Optional<TaskListDTO> taskListDTO = taskListService.getTaskList(id);
-        return taskListDTO.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    @GetMapping("/{listId}/tasks")
+    public ResponseEntity<List<TaskDTO>> getTasksByListId(@PathVariable Long listId) {
+        List<TaskDTO> tasks = taskListService.getTasksByListId(listId);
+        if (tasks.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(tasks);
     }
 
     @PostMapping

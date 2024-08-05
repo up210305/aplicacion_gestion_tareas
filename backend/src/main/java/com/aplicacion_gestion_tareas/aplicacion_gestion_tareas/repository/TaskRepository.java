@@ -9,6 +9,7 @@ import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.model.Task;
 
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
-    List<Task> findByTaskListId(Long listId);
-    List<Task> findByTaskListIdIsNull(); // Add this method
+    List<Task> findByTaskListId(Long taskListId);
+    List<Task> findByTaskListIdIsNull();
+
 }

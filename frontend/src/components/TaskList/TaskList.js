@@ -63,32 +63,37 @@ const TaskItem = ({ task, onToggleImportant, onDelete, onEdit, darkMode }) => (
 );
 
 const TaskList = ({ darkMode }) => {
-  const { listId } = useParams(); // Obtener listId de los parámetros de la URL
+  const { listId } = useParams();
   const [tasks, setTasks] = useState([]);
   const [open, setOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [listTitle, setListTitle] = useState('My Task List');
-  const [listDescription, setListDescription] = useState('This is my list description');
+  const [listTitle, setListTitle] = useState('');
+  const [listDescription, setListDescription] = useState('');
 
   useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        if (listId) {
-          const response = await axios.get(`http://localhost:8080/api/lists/${listId}/tasks`);
-          setTasks(response.data);
-        } else {
-          const response = await axios.get('http://localhost:8080/api/tasks/no-list');
-          setTasks(response.data);
+    const fetchTasksAndList = async () => {
+      if (listId) {
+        try {
+          // Fetch tasks
+          const responseTasks = await axios.get(`http://localhost:8080/tasks/list/${listId}`);
+          setTasks(responseTasks.data);
+
+          // Fetch list details
+          // Asegúrate de que esta URL sea correcta para obtener los detalles de la lista si es necesario
+          const responseList = await axios.get(`http://localhost:8080/lists/${listId}`);
+          const listDetails = responseList.data;
+          setListTitle(listDetails.list_name);
+          setListDescription(listDetails.description);
+        } catch (error) {
+          console.error('Error fetching tasks and list:', error);
         }
-      } catch (error) {
-        console.error('Error fetching tasks:', error);
+      } else {
+        console.error('listId is undefined or null');
       }
     };
 
-    if (listId) {
-      fetchTasks();
-    }
+    fetchTasksAndList();
   }, [listId]);
 
   const handleToggleImportant = async (task) => {
@@ -98,9 +103,9 @@ const TaskList = ({ darkMode }) => {
     }
 
     try {
-      await axios.patch(`http://localhost:8080/api/tasks/${task.id_task}`, { important: !task.important });
+      await axios.patch(`http://localhost:8080/tasks/${task.id_task}`, { important: !task.important });
       task.important = !task.important;
-      setTasks([...tasks]);
+      setTasks(tasks.map(t => (t.id_task === task.id_task ? task : t)));
       if (task.important) {
         setSnackbarOpen(true);
       }
@@ -116,7 +121,7 @@ const TaskList = ({ darkMode }) => {
 
   const confirmDelete = async () => {
     try {
-      await axios.delete(`http://localhost:8080/api/tasks/${taskToDelete.id_task}`);
+      await axios.delete(`http://localhost:8080/tasks/${taskToDelete.id_task}`);
       setTasks(tasks.filter(task => task.id_task !== taskToDelete.id_task));
       setOpen(false);
     } catch (error) {
@@ -141,10 +146,15 @@ const TaskList = ({ darkMode }) => {
 
   const handleAddTask = async (taskName, dueDate) => {
     try {
-      const response = await axios.post('http://localhost:8080/api/tasks', { 
+      const validListId = listId && !isNaN(listId) ? parseInt(listId) : null;
+      if (!validListId) {
+        console.error('Invalid listId:', listId);
+        return;
+      }
+      const response = await axios.post('http://localhost:8080/tasks', { 
         task_title: taskName, 
         expire_date: dueDate, 
-        list_id: listId ? parseInt(listId) : null 
+        list_id: validListId 
       });
       const newTask = response.data;
       setTasks([...tasks, newTask]);
@@ -159,16 +169,16 @@ const TaskList = ({ darkMode }) => {
       <Box sx={{ flex: 1, p: 2 }}>
         <Box sx={{ backgroundColor: darkMode ? '#333' : 'white', color: darkMode ? 'white' : 'inherit', borderRadius: '4px', padding: '10px', marginBottom: '20px' }}>
           <Typography variant="h5" gutterBottom>
-            {listTitle}
+            {listTitle || 'List Title'}
           </Typography>
           <Typography variant="body1">
-            {listDescription}
+            {listDescription || 'List Description'}
           </Typography>
         </Box>
-        <MUIList sx={{ backgroundColor: darkMode ? '#333' : 'white', color: darkMode ? 'white' : 'inherit', borderRadius: '4px', padding: '10px', paddingBottom: '70px' /* Extra padding for Add Task bar */ }}>
+        <MUIList sx={{ backgroundColor: darkMode ? '#333' : 'white', color: darkMode ? 'white' : 'inherit', borderRadius: '4px', padding: '10px', paddingBottom: '70px' }}>
           {tasks.map((task) => (
             <TaskItem
-              key={task.id_task} // Asegúrate de que cada elemento tenga una clave única
+              key={task.id_task}
               task={task}
               onToggleImportant={handleToggleImportant}
               onDelete={handleDelete}
