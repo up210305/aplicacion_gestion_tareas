@@ -1,11 +1,10 @@
-<<<<<<< HEAD
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import StarIcon from '@mui/icons-material/Star';
-import WbSunnyIcon from '@mui/icons-material/WbSunny';
-import { Box, Card, CardContent, Grid, IconButton, InputBase, Paper, Typography } from '@mui/material';
-import React, { useState } from 'react';
-=======
+//import DeleteIcon from '@mui/icons-material/Delete';
+//import EditIcon from '@mui/icons-material/Edit';
+//import StarIcon from '@mui/icons-material/Star';
+//import WbSunnyIcon from '@mui/icons-material/WbSunny';
+//import { Box, Card, CardContent, Grid, IconButton, InputBase, Paper, Typography } from '@mui/material';
+//import React, { useState } from 'react';
+
 import React, { useEffect, useState } from 'react';
 import WbSunnyIcon from '@mui/icons-material/WbSunny';
 import StarIcon from '@mui/icons-material/Star';
@@ -13,7 +12,6 @@ import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Box, Card, CardContent, Grid, IconButton, Typography, InputBase, Paper } from '@mui/material';
 import { fetchTasks } from '../../services/taskService';
->>>>>>> develop
 
 const Home = () => {
   const [tasks, setTasks] = useState([]);
