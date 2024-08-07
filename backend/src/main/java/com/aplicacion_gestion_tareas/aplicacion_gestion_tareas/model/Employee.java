@@ -8,7 +8,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-
+import lombok.Builder;
+@Builder
 @Data
 @Entity
 @Table(name = "employees")
@@ -34,5 +35,5 @@ public class Employee {
   private String password;
   
   private boolean active;
- 
+
 }
