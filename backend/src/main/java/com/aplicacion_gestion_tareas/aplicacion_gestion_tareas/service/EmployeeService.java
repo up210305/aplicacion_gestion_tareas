@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.EmployeeDTO;
+import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.mapper.EmployeeMapper;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.CreateEmployeeDTO;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.exception.ExcepcionRecursoNoEncontrado;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.model.Employee;
@@ -18,9 +20,14 @@ import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.repository.Employ
 
 @Service
 public class EmployeeService {
-
     @Autowired
     private EmployeeRepository employeeRepository;
+
+    public EmployeeDTO registerEmployee(EmployeeDTO employeeDTO) {
+        Employee employee = EmployeeMapper.INSTANCE.toEmployee(employeeDTO);
+        Employee registeredEmployee = employeeRepository.save(employee);
+        return EmployeeMapper.INSTANCE.toEmployeeDTO(registeredEmployee);
+    }
 
     public EmployeeService(EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
@@ -32,14 +39,15 @@ public class EmployeeService {
         return employeeRepository.save(employee);
     }
 
-    public Optional<Employee> loginEmployee(String username, String password) {
+    public Optional<EmployeeDTO> loginEmployee(String username, String password) {
         Optional<Employee> employeeOpt = employeeRepository.findByUsername(username);
-        if (employeeOpt.isPresent() && employeeOpt.get().getPassword().equals(password)) {
-            return employeeOpt;
-        }
-        return Optional.empty();
+        return employeeOpt.filter(employee -> employee.getPassword().equals(password))
+                .map(EmployeeMapper.INSTANCE::toEmployeeDTO);
     }
 
+    public Optional<EmployeeDTO> getEmployee(Long id) {
+        return employeeRepository.findById(id).map(EmployeeMapper.INSTANCE::toEmployeeDTO);
+    }
     public Optional<Employee> loginEmployeeDTO(String username, String password) {
         return employeeRepository.findByUsernameAndPassword(username, password);
     }
@@ -55,9 +63,9 @@ public class EmployeeService {
         return employeeRepository.save(newEmployee);
     }
 
-    public Optional<Employee> getEmployee(Long id) {
-        return employeeRepository.findById(id);
-    }
+    // public Optional<Employee> getEmployee(Long id) {
+    //     return employeeRepository.findById(id);
+    // }
 
     public Long getUsername(String username) {
         return employeeRepository.findIdByUsername(username);
@@ -100,3 +108,4 @@ public class EmployeeService {
         return employeeRepository.findAllOrderByLastName();
     }
 }
+

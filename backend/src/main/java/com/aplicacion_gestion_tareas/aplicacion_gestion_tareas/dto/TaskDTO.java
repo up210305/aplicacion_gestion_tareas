@@ -1,6 +1,8 @@
 package com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+
 import lombok.Data;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
@@ -10,6 +12,11 @@ import jakarta.validation.constraints.Size;
 @Data
 @Schema(description = "DTO para las tareas")
 public class TaskDTO {
+    // private Long id;
+    // private String title;
+    // private String description;
+    // private LocalDateTime creationDate;
+    // private LocalDateTime expireDate;
 
     @Schema(description = "Título de la tarea", example = "Comprar víveres")
     @NotBlank(message = "El título de la tarea no puede estar vacío")
@@ -29,6 +36,8 @@ public class TaskDTO {
 
     @Schema(description = "Indica si la tarea es importante", example = "false")
     private Boolean important;
+    // private Long employeeId;
+    // private Long taskListId;
 
     @Schema(description = "ID del empleado asignado a la tarea")
     @NotNull(message = "El ID del empleado no puede ser nulo")

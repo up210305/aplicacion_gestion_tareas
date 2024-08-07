@@ -1,4 +1,3 @@
--- Base de datos: GESTION_TAREAS
 USE GESTION_TAREAS;
 
 -- Elimina las tablas si existen
