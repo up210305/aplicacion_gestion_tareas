@@ -9,11 +9,17 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.Builder;
-@Builder
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "employees")
 public class Employee {
+
   @Id
   @Column(name = "id_employee")
   @GeneratedValue(strategy = GenerationType.IDENTITY)
