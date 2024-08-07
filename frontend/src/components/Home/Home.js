@@ -1,47 +1,41 @@
-//import DeleteIcon from '@mui/icons-material/Delete';
-//import EditIcon from '@mui/icons-material/Edit';
-//import StarIcon from '@mui/icons-material/Star';
-//import WbSunnyIcon from '@mui/icons-material/WbSunny';
-//import { Box, Card, CardContent, Grid, IconButton, InputBase, Paper, Typography } from '@mui/material';
-//import React, { useState } from 'react';
-
 import React, { useEffect, useState } from 'react';
 import WbSunnyIcon from '@mui/icons-material/WbSunny';
-import StarIcon from '@mui/icons-material/Star';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/Delete';
+// import StarIcon from '@mui/icons-material/Star';
+// import EditIcon from '@mui/icons-material/Edit';
+// import DeleteIcon from '@mui/icons-material/Delete';
 import { Box, Card, CardContent, Grid, IconButton, Typography, InputBase, Paper } from '@mui/material';
-import { fetchTasks } from '../../services/taskService';
+import axios from 'axios';
+import moment from 'moment'; // Importa moment
 
 const Home = () => {
   const [tasks, setTasks] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    const getTasks = async () => {
+    const fetchTasksForToday = async () => {
       try {
-        const tasksData = await fetchTasks();
-        setTasks(tasksData);
+        const response = await axios.get('http://localhost:8080/tasks/today');
+        console.log('Tasks received:', response.data); // Verifica las fechas aquí
+        setTasks(response.data);
       } catch (error) {
         console.error('Error fetching tasks:', error);
       }
     };
 
-    getTasks();
+    fetchTasksForToday();
   }, []);
 
   const handleSearch = (event) => {
     setSearchTerm(event.target.value);
   };
 
-
   const filteredTasks = tasks.filter(task =>
-    task.taskTitle.toLowerCase().includes(searchTerm.toLowerCase())
+    task.title && task.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleDeleteTask = (task) => {
-    setTasks(tasks.filter(t => t !== task));
-  };
+  // const handleDeleteTask = (task) => {
+  //   setTasks(tasks.filter(t => t !== task));
+  // };
 
   return (
     <Box 
@@ -64,16 +58,19 @@ const Home = () => {
               <Grid item xs={12} md={4} key={index}>
                 <Card>
                   <CardContent>
-                    <Typography variant="body2" color="textSecondary">
-                      {task.taskTitle}
+                    <Typography variant="h6" color="textPrimary">
+                      {task.title}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
-                      Created: {task.creationDate}
+                      {task.description}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
-                      Due: {task.expireDate}
+                      Created: {task.creationDate ? moment(task.creationDate).format('MMMM DD, YYYY') : 'N/A'}
                     </Typography>
-                    <Box display="flex" justifyContent="flex-end">
+                    <Typography variant="body2" color="textSecondary">
+                      Due: {task.expireDate ? moment(task.expireDate).format('MMMM DD, YYYY') : 'N/A'}
+                    </Typography>
+                    {/* <Box display="flex" justifyContent="flex-end">
                       <IconButton>
                         <StarIcon />
                       </IconButton>
@@ -83,7 +80,7 @@ const Home = () => {
                       <IconButton onClick={() => handleDeleteTask(task)}>
                         <DeleteIcon />
                       </IconButton>
-                    </Box>
+                    </Box> */}
                   </CardContent>
                 </Card>
               </Grid>

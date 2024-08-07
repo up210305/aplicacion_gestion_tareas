@@ -3,6 +3,10 @@ package com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.service;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +34,19 @@ public class TaskService {
     //     return taskRepository.findAll();
     // }
 
+    public List<TaskDTO> getTasksForToday(LocalDate today) {
+        // Inicio del día actual
+        LocalDateTime startDate = today.atStartOfDay();
+        // Fin del día actual (23:59:59.999999999)
+        LocalDateTime endDate = today.atTime(23, 59, 59, 999_999_999);
+    
+        // Obtener las tareas que están dentro del rango de fechas
+        List<Task> tasks = taskRepository.findByExpireDate(startDate, endDate);
+        return tasks.stream().map(taskMapper::toTaskDTO).collect(Collectors.toList());
+    }
+    
+    
+    
     public Optional<TaskDTO> getTask(Long id) {
         return taskRepository.findById(id).map(TaskMapper.INSTANCE::toTaskDTO);
     }

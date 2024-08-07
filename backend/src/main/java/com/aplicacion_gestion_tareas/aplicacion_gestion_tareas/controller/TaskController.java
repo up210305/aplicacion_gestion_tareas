@@ -2,8 +2,10 @@ package com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.controller;
 
 import java.util.List;
 import java.util.Optional;
+import java.time.LocalDate;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,6 +30,13 @@ public class TaskController {
     @GetMapping("/allTasks")
     public List<TaskDTO> getTasks() {
         return taskService.getTasks();
+    }
+
+    @GetMapping("/today")
+    public ResponseEntity<List<TaskDTO>> getTasksForToday() {
+        LocalDate today = LocalDate.now();
+        List<TaskDTO> tasks = taskService.getTasksForToday(today);
+        return new ResponseEntity<>(tasks, HttpStatus.OK);
     }
 
     @GetMapping("/getTask/{id}")

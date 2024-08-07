@@ -17,6 +17,22 @@ public class TaskDTO {
     private String description;
     private LocalDateTime creationDate;
     private LocalDateTime expireDate;
+    private Boolean important;
+    private Long employeeId;
+    private Long taskListId;
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // @Schema(description = "Título de la tarea", example = "Comprar víveres")
     // @NotBlank(message = "El título de la tarea no puede estar vacío")
@@ -36,9 +52,7 @@ public class TaskDTO {
 
     // @Schema(description = "Indica si la tarea es importante", example = "false")
 
-    private Boolean important;
-    private Long employeeId;
-    private Long taskListId;
+    
 
     // @Schema(description = "ID del empleado asignado a la tarea")
     // @NotNull(message = "El ID del empleado no puede ser nulo")
