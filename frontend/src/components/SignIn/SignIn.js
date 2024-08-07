@@ -11,11 +11,8 @@ import { styled } from '@mui/system';
 import axios from 'axios';
 import React from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
-
-// Import the zglogo image
 import zglogo from '../../assets/images/zglogo.png';
 
-// Styled components
 const StyledContainer = styled(Container)(({ theme }) => ({
   height: '100vh',
   display: 'flex',
@@ -23,8 +20,8 @@ const StyledContainer = styled(Container)(({ theme }) => ({
   alignItems: 'center',
   overflow: 'hidden',
   backgroundColor: theme.palette.mode === 'dark'
-    ? 'rgba(15, 41, 91, 255)' // Dark mode blue
-    : 'rgba(0, 48, 135, 255)', // Light mode blue
+    ? 'rgba(15, 41, 91, 255)'
+    : 'rgba(0, 48, 135, 255)',
 }));
 
 const StyledBox = styled(Box)(({ theme }) => ({
@@ -61,10 +58,14 @@ export default function SignIn() {
     
     try {
       const response = await axios.post('http://localhost:8080/api/auth/login', credentials);
-      console.log(response.data);
+      console.log('Login Response:', response.data);
 
       localStorage.setItem('token', response.data.token);
-      localStorage.setItem('employeeId', response.data.employeeId);
+      localStorage.setItem('userId', response.data.userId);
+
+      // Verify that the data is stored in local storage
+      console.log('Stored token:', localStorage.getItem('token'));
+      console.log('Stored userId:', localStorage.getItem('userId'));
       
       navigate('/home');
     } catch (error) {

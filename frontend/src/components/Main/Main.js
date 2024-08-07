@@ -44,12 +44,15 @@ function Main() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await axios.get(`/api/employee/${localStorage.getItem('employeeId')}`);
-        setUser({
-          firstName: response.data.firstName,
-          lastName: response.data.lastName,
-          username: response.data.username,
-        });
+        const userId = localStorage.getItem('userId');
+        if (userId) {
+          const response = await axios.get(`http://localhost:8080/api/employee/${userId}`);
+          setUser({
+            firstName: response.data.firstName,
+            lastName: response.data.lastName,
+            username: response.data.username,
+          });
+        }
       } catch (error) {
         console.error("Error fetching user data:", error);
       }

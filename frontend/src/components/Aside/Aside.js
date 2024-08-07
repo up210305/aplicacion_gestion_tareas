@@ -2,7 +2,7 @@ import { Bookmark, CheckBox, Home, ViewList } from '@mui/icons-material';
 import { Avatar, Box, Divider, InputBase, List, ListItem, ListItemIcon, ListItemText, Typography, useTheme } from '@mui/material';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import zegucomImage from '../../assets/images/zegucom.png'; // Asegúrate de que la ruta sea correcta
+import zegucomImage from '../../assets/images/zegucom.png'; // Ensure the path is correct
 
 const Aside = ({ firstName, lastName, username }) => {
   const navigate = useNavigate();
@@ -19,7 +19,7 @@ const Aside = ({ firstName, lastName, username }) => {
         justifyContent: 'space-between',
         padding: 2,
         backgroundColor: isDarkMode ? 'rgba(15,41,91,255)' : 'rgba(0,48,135,255)',
-        position: 'fixed', // Fija el Aside en el lado izquierdo
+        position: 'fixed', // Fix Aside to the left side
       }}
     >
       <Box>
@@ -35,7 +35,7 @@ const Aside = ({ firstName, lastName, username }) => {
           </Box>
         </Box>
         <InputBase
-          placeholder="search"
+          placeholder="Search"
           sx={{
             width: '100%',
             padding: '4px 8px',
