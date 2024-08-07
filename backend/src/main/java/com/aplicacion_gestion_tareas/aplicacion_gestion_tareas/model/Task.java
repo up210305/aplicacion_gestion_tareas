@@ -1,13 +1,14 @@
 package com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.model;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -15,22 +16,23 @@ import lombok.Data;
 @Entity
 @Table(name = "tasks")
 public class Task {
+
     @Id
     @Column(name = "id_task")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idTask;
+    private Long id;
 
     @Column(name = "task_title", nullable = false)
-    private String taskTitle;
+    private String title;
 
     @Column(name = "task_description")
-    private String taskDescription;
+    private String description;
 
     @Column(name = "creation_date", nullable = false)
-    private LocalDate creationDate;
+    private LocalDateTime creationDate;  // Cambiado a LocalDateTime
 
     @Column(name = "expire_date")
-    private LocalDate expireDate;
+    private LocalDateTime expireDate;    // Cambiado a LocalDateTime
 
     @Column(name = "completed")
     private Boolean completed;
@@ -38,14 +40,11 @@ public class Task {
     @Column(name = "important")
     private Boolean important;
 
-    @Column(name = "id_employee")
-    private Long idEmployee;
+    @ManyToOne
+    @JoinColumn(name = "id_employee", nullable = false)
+    private Employee employee;
 
-    @Column(name = "id_list")
-    private Long idList;
-
-    @PrePersist
-    public void prePersist() {
-        creationDate = LocalDate.now();
-    }
+    @ManyToOne
+    @JoinColumn(name = "id_list", nullable = false)
+    private TaskList taskList;
 }

@@ -1,7 +1,7 @@
-// src/components/NewList.js
+import { Cancel, CheckCircle } from '@mui/icons-material';
+import { Box, IconButton, TextField, Typography } from '@mui/material';
+import axios from 'axios';
 import React, { useState } from 'react';
-import { Box, TextField, Typography, IconButton } from '@mui/material';
-import { CheckCircle, Cancel } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 
 const NewList = ({ darkMode, onSave, onCancel }) => {
@@ -9,18 +9,31 @@ const NewList = ({ darkMode, onSave, onCancel }) => {
   const [description, setDescription] = useState('');
   const navigate = useNavigate();
 
-  const handleSave = () => {
-    if (onSave) {
-      onSave(title, description); // Pass the title and description to the onSave callback
-      setTitle('');
-      setDescription('');
-      navigate('/list'); // Redirect to the QList page
+  // Obtener el ID del empleado del almacenamiento local
+  const employeeId = localStorage.getItem('employeeId');
+
+  const handleSave = async () => {
+    if (!employeeId) {
+      console.error('Employee ID is not available');
+      return;
+    }
+    try {
+      const response = await axios.post(
+        'http://localhost:8080/api/lists',
+        { listName: title, description, employeeId } // Envia el cuerpo de la solicitud
+      );
+      console.log('List created:', response.data); // Agrega esto si quieres ver la respuesta
+      if (onSave) onSave(); // Llama al callback onSave si se proporciona
+      navigate('/list'); // Redirige a la página de listas
+    } catch (error) {
+      console.error('Error creating list:', error);
     }
   };
+  
 
   const handleCancel = () => {
-    if (onCancel) onCancel(); // Call the onCancel callback if provided
-    navigate('/list'); // Redirect to the QList page if canceled
+    if (onCancel) onCancel(); // Llama al callback de cancelación si se proporciona
+    navigate('/list'); // Redirige a la página de listas si se cancela
   };
 
   return (

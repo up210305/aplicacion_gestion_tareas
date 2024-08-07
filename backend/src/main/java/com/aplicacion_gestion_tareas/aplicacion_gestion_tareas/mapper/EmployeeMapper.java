@@ -1,14 +1,16 @@
 package com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.mapper;
 
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
+
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.EmployeeDTO;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.model.Employee;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
-@Mapper(componentModel = "spring")
+@Mapper
 public interface EmployeeMapper {
-    @Mapping(target = "idEmployee", ignore = true)
-    Employee toEmployee(EmployeeDTO employeeDTO);
+    EmployeeMapper INSTANCE = Mappers.getMapper(EmployeeMapper.class);
 
     EmployeeDTO toEmployeeDTO(Employee employee);
+
+    Employee toEmployee(EmployeeDTO employeeDTO);
 }
