@@ -16,6 +16,7 @@ import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.EmployeeDTO;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.service.EmployeeService;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.util.JwtUtil;
 
+
 @RestController
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = "http://localhost:3000") // Cambia esto a la URL de tu frontend
