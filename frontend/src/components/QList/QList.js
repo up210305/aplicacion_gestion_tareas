@@ -12,7 +12,7 @@ const QList = ({ darkMode }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetchLists(); // Llama a fetchLists cuando el componente se monte
+    fetchLists(); 
   }, []);
 
   useEffect(() => {

@@ -5,12 +5,14 @@ import React, { useState } from 'react';
 const AddTask = ({ darkMode, onAddTask }) => {
   const [taskName, setTaskName] = useState('');
   const [dueDate, setDueDate] = useState('');
+  const [description, setDescription] = useState('');
   const [openDatePicker, setOpenDatePicker] = useState(false);
 
   const handleAddTask = () => {
     if (taskName.trim()) {
-      onAddTask(taskName, dueDate);
+      onAddTask(taskName, description, dueDate); // Pass description along with taskName and dueDate
       setTaskName('');
+      setDescription('');
       setDueDate('');
     }
   };
@@ -45,13 +47,30 @@ const AddTask = ({ darkMode, onAddTask }) => {
           },
         }}
       />
+      <TextField
+        variant="outlined"
+        placeholder="Enter task description"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        sx={{
+          flexGrow: 1,
+          marginRight: '8px',
+          backgroundColor: darkMode ? 'rgb(129,165,202)' : '#fff', // Match specific shading
+          borderRadius: '4px',
+        }}
+        InputProps={{
+          style: {
+            color: darkMode ? '#fff' : '#000',
+          },
+        }}
+      />
       <IconButton color="primary" onClick={handleAddTask}>
         <Add />
       </IconButton>
       <IconButton color="primary" onClick={() => setOpenDatePicker(true)}>
         <CalendarToday />
       </IconButton>
-      <IconButton color="primary" onClick={() => { setTaskName(''); setDueDate(''); }}>
+      <IconButton color="primary" onClick={() => { setTaskName(''); setDescription(''); setDueDate(''); }}>
         <Cancel />
       </IconButton>
 

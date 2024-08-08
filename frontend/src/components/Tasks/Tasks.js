@@ -20,6 +20,7 @@ import AddTask from '../AddTask';
 
 function Tasks({ darkMode }) {
   const [tasks, setTasks] = useState([]);
+  const [filteredTasks, setFilteredTasks] = useState([]);
   const [editingTask, setEditingTask] = useState(null);
   const [open, setOpen] = useState(false);
 
@@ -27,9 +28,20 @@ function Tasks({ darkMode }) {
     fetchTasks();
   }, []);
 
+  useEffect(() => {
+    const storedEmployeeId = parseInt(localStorage.employeeId, 10);
+
+    const filteredTasks = tasks.filter((task) => {
+      return task.employeeId === storedEmployeeId && task.taskListId === null;
+    });
+
+    setFilteredTasks(filteredTasks);
+  }, [tasks]);
+
   const fetchTasks = async () => {
     try {
       const response = await axios.get('http://localhost:8080/tasks/allTasks');
+      console.log('Fetched tasks:', response.data); // Debug log
       setTasks(response.data);
     } catch (error) {
       console.error('Error fetching tasks:', error);
@@ -39,7 +51,8 @@ function Tasks({ darkMode }) {
   const handleDeleteTask = async (taskId) => {
     try {
       await axios.delete(`http://localhost:8080/tasks/${taskId}`);
-      fetchTasks();
+      console.log('Deleted task ID:', taskId); // Debug log
+      setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
     } catch (error) {
       console.error('Error deleting task:', error);
     }
@@ -51,7 +64,10 @@ function Tasks({ darkMode }) {
         ...task,
         important: !task.important,
       });
-      fetchTasks();
+      console.log('Updated important status for task ID:', task.id); // Debug log
+      setTasks(prevTasks =>
+        prevTasks.map(t => t.id === task.id ? { ...t, important: !t.important } : t)
+      );
     } catch (error) {
       console.error('Error updating task important status:', error);
     }
@@ -71,7 +87,10 @@ function Tasks({ darkMode }) {
         ...editingTask,
         expireDate: editingTask.expireDate ? `${editingTask.expireDate}T00:00:00` : null, // Add time part
       });
-      fetchTasks();
+      console.log('Saved edited task ID:', editingTask.id); // Debug log
+      setTasks(prevTasks =>
+        prevTasks.map(t => t.id === editingTask.id ? { ...t, ...editingTask } : t)
+      );
       setOpen(false);
       setEditingTask(null);
     } catch (error) {
@@ -83,7 +102,6 @@ function Tasks({ darkMode }) {
     try {
       const employeeId = Number(localStorage.getItem('employeeId'));
     
-      // Verificar que employeeId es un número y es válido
       if (isNaN(employeeId) || !Number.isInteger(employeeId)) {
         throw new Error('Invalid employeeId');
       }
@@ -91,14 +109,25 @@ function Tasks({ darkMode }) {
         title: taskName,
         description: taskDescription,
         expireDate: dueDate ? `${dueDate}T00:00:00` : null,
-        employee: { idEmployee: employeeId },  // Enviar el objeto empleado
-        taskList: null  // Si no hay lista, pasar null
+        employee: { idEmployee: employeeId },
+        taskList: null
       });
       const newTask = response.data;
-      setTasks([...tasks, newTask]);
+      console.log('Added new task:', newTask); // Debug log
+      setTasks(prevTasks => [newTask, ...prevTasks]); // Add the new task to the beginning of the list
     } catch (error) {
       console.error('Error adding task:', error);
     }
+    await fetchTasks();
+  };
+
+  const formatDate = (dateArray) => {
+    if (!dateArray || !Array.isArray(dateArray) || dateArray.length < 3) {
+      return 'No due date';
+    }
+    const [year, month, day, hours = 0, minutes = 0] = dateArray;
+    const date = new Date(year, month - 1, day, hours, minutes);
+    return date.toLocaleDateString(); // You can adjust the format as needed
   };
 
   return (
@@ -120,7 +149,7 @@ function Tasks({ darkMode }) {
         Tasks
       </Typography>
       <List>
-        {tasks.map((task) => (
+        {filteredTasks.map((task) => (
           <ListItem
             key={task.id}
             sx={{
@@ -132,7 +161,7 @@ function Tasks({ darkMode }) {
           >
             <ListItemText
               primary={task.title}
-              secondary={task.description}
+              secondary={`Description: ${task.description || 'No description'} - Created on ${formatDate(task.creationDate)} - Due by ${task.expireDate ? formatDate(task.expireDate) : 'No due date'}`}
               sx={{ color: darkMode ? 'white' : 'inherit' }}
             />
             <ListItemSecondaryAction>
@@ -149,7 +178,7 @@ function Tasks({ darkMode }) {
           </ListItem>
         ))}
       </List>
-      {tasks.length === 0 && (
+      {filteredTasks.length === 0 && (
         <Typography variant="body1" color="textSecondary">
           No tasks available.
         </Typography>
