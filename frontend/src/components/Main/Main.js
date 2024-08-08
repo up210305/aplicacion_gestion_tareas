@@ -1,11 +1,11 @@
+import React, { useEffect, useMemo, useState } from "react";
+import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { ArrowBack, Brightness4, Logout, WbSunny } from "@mui/icons-material";
 import Box from "@mui/material/Box";
 import CssBaseline from "@mui/material/CssBaseline";
 import IconButton from "@mui/material/IconButton";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import axios from 'axios';
-import React, { useEffect, useMemo, useState } from "react";
-import { Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import Aside from "../Aside";
 import Home from "../Home";
 import ImportantTasks from "../ImportantTasks/ImportantTasks";
@@ -14,6 +14,7 @@ import QList from "../QList";
 import SignIn from "../SignIn";
 import SignUp from "../SignUp";
 import TaskList from "../TaskList";
+import Tasks from "../Tasks/Tasks";  // Importar el componente Tasks
 
 function Main() {
   const [darkMode, setDarkMode] = useState(() => {
@@ -46,7 +47,7 @@ function Main() {
       try {
         const userId = localStorage.getItem('userId');
         if (userId) {
-          const response = await axios.get(`http://localhost:8080/api/auth/getEmployee/${userId}`);
+          const response = await axios.get('http://localhost:8080/api/auth/employee/${userId}');
           setUser({
             firstName: response.data.firstName,
             lastName: response.data.lastName,
@@ -116,7 +117,7 @@ function Main() {
             display: "flex",
             flexDirection: "column",
             backgroundColor: 'inherit',
-            overflowY: "auto", // Agrega esta línea
+            overflowY: "auto",
           }}
         >
           <Box
@@ -167,6 +168,7 @@ function Main() {
               path="/list/:listId/tasks"
               element={<TaskList darkMode={darkMode} />}
             />
+            <Route path="/tasks" element={<Tasks />} /> {/* Añade esta ruta para el componente Tasks */}
           </Routes>
         </Box>
       </Box>
