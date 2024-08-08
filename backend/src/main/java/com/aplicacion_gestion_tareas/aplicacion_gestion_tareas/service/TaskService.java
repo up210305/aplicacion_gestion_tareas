@@ -1,15 +1,12 @@
 package com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.TaskDTO;
@@ -21,8 +18,6 @@ import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.model.TaskList;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.repository.EmployeeRepository;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.repository.TaskListRepository;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.repository.TaskRepository;
-
-import jakarta.transaction.Transactional;
 
 @Service
 public class TaskService {
@@ -44,9 +39,25 @@ public class TaskService {
                 .collect(Collectors.toList());
     }
 
-    // public List<Task> getTasks() {
-    //     return taskRepository.findAll();
-    // }
+    public Task addTask(Long employeeId, String title, String description, LocalDateTime expireDate, Long listId) {
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+        Task task = new Task();
+        task.setTitle(title);
+        task.setDescription(description);
+        task.setCreationDate(LocalDateTime.now());
+        task.setExpireDate(expireDate);
+        task.setEmployee(employee);
+
+        if (listId != null) {
+            TaskList taskList = taskListRepository.findById(listId)
+                    .orElseThrow(() -> new RuntimeException("TaskList not found"));
+            task.setTaskList(taskList);
+        }
+
+        return taskRepository.save(task);
+    }
 
     public List<TaskDTO> getTasksForToday(LocalDate today) {
         LocalDateTime startDate = today.atStartOfDay();

@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { Delete, Edit, Star, StarBorder } from '@mui/icons-material';
 import {
   Box,
   Button,
-  Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   IconButton,
   List,
   ListItem,
@@ -11,16 +13,13 @@ import {
   ListItemText,
   TextField,
   Typography,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
 } from '@mui/material';
-import { Delete, Edit, Star, StarBorder } from '@mui/icons-material';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
+import AddTask from '../AddTask';
 
-function Tasks() {
+function Tasks({ darkMode }) {
   const [tasks, setTasks] = useState([]);
-  const [newTask, setNewTask] = useState({ title: '', description: '', expireDate: '', taskListId: 0 });
   const [editingTask, setEditingTask] = useState(null);
   const [open, setOpen] = useState(false);
 
@@ -34,20 +33,6 @@ function Tasks() {
       setTasks(response.data);
     } catch (error) {
       console.error('Error fetching tasks:', error);
-    }
-  };
-
-  const createTask = async () => {
-    if (!newTask.title || !newTask.description || !newTask.expireDate) return;
-    try {
-      await axios.post('http://localhost:8080/tasks/createTask', {
-        ...newTask,
-        taskListId: 0,  // Asegurando que el taskListId es 0
-      });
-      fetchTasks();
-      setNewTask({ title: '', description: '', expireDate: '', taskListId: 0 });
-    } catch (error) {
-      console.error('Error creating task:', error);
     }
   };
 
@@ -73,13 +58,19 @@ function Tasks() {
   };
 
   const handleEditTask = (task) => {
-    setEditingTask(task);
+    setEditingTask({
+      ...task,
+      expireDate: task.expireDate ? task.expireDate.split('T')[0] : '', // Format date for input
+    });
     setOpen(true);
   };
 
   const handleSaveEditTask = async () => {
     try {
-      await axios.put(`http://localhost:8080/tasks/updateTask/${editingTask.id}`, editingTask);
+      await axios.put(`http://localhost:8080/tasks/updateTask/${editingTask.id}`, {
+        ...editingTask,
+        expireDate: editingTask.expireDate ? `${editingTask.expireDate}T00:00:00` : null, // Add time part
+      });
       fetchTasks();
       setOpen(false);
       setEditingTask(null);
@@ -88,39 +79,61 @@ function Tasks() {
     }
   };
 
+  const handleAddTask = async (taskName, taskDescription, dueDate) => {
+    try {
+      const employeeId = Number(localStorage.getItem('employeeId'));
+    
+      // Verificar que employeeId es un número y es válido
+      if (isNaN(employeeId) || !Number.isInteger(employeeId)) {
+        throw new Error('Invalid employeeId');
+      }
+      const response = await axios.post('http://localhost:8080/tasks/add', {
+        title: taskName,
+        description: taskDescription,
+        expireDate: dueDate ? `${dueDate}T00:00:00` : null,
+        employee: { idEmployee: employeeId },  // Enviar el objeto empleado
+        taskList: null  // Si no hay lista, pasar null
+      });
+      const newTask = response.data;
+      setTasks([...tasks, newTask]);
+    } catch (error) {
+      console.error('Error adding task:', error);
+    }
+  };
+
   return (
-    <Box sx={{ p: 3 }}>
-      <Typography variant="h4" gutterBottom>
-        Task List
+    <Box
+      sx={{
+        padding: '16px',
+        backgroundColor: darkMode ? 'rgb(60,101,156)' : '#f5f5f5',
+        borderRadius: '12px',
+        color: darkMode ? 'white' : 'inherit',
+        maxHeight: 'calc(100vh - 64px)',
+        overflowY: 'auto',
+      }}
+    >
+      <Typography
+        variant="h4"
+        gutterBottom
+        sx={{ color: darkMode ? 'white' : 'inherit' }}
+      >
+        Tasks
       </Typography>
-      <Box sx={{ display: 'flex', gap: 2, mb: 3 }}>
-        <TextField
-          label="Title"
-          value={newTask.title}
-          onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
-        />
-        <TextField
-          label="Description"
-          value={newTask.description}
-          onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
-        />
-        <TextField
-          label="Expire Date"
-          type="date"
-          value={newTask.expireDate}
-          onChange={(e) => setNewTask({ ...newTask, expireDate: e.target.value })}
-          InputLabelProps={{ shrink: true }}
-        />
-        <Button variant="contained" color="primary" onClick={createTask}>
-          Add Task
-        </Button>
-      </Box>
       <List>
         {tasks.map((task) => (
-          <ListItem key={task.id} sx={{ mb: 1, bgcolor: 'background.paper', borderRadius: 1 }}>
+          <ListItem
+            key={task.id}
+            sx={{
+              backgroundColor: darkMode ? '#81a5ca' : '#fff',
+              marginBottom: '10px',
+              borderRadius: '4px',
+              color: darkMode ? 'white' : 'inherit',
+            }}
+          >
             <ListItemText
               primary={task.title}
               secondary={task.description}
+              sx={{ color: darkMode ? 'white' : 'inherit' }}
             />
             <ListItemSecondaryAction>
               <IconButton edge="end" onClick={() => updateImportant(task)}>
@@ -141,19 +154,20 @@ function Tasks() {
           No tasks available.
         </Typography>
       )}
+      <AddTask darkMode={darkMode} onAddTask={handleAddTask} />
       <Dialog open={open} onClose={() => setOpen(false)}>
         <DialogTitle>Edit Task</DialogTitle>
         <DialogContent>
           <TextField
             label="Title"
-            value={editingTask?.title}
+            value={editingTask?.title || ''}
             onChange={(e) => setEditingTask({ ...editingTask, title: e.target.value })}
             fullWidth
             sx={{ mb: 2 }}
           />
           <TextField
             label="Description"
-            value={editingTask?.description}
+            value={editingTask?.description || ''}
             onChange={(e) => setEditingTask({ ...editingTask, description: e.target.value })}
             fullWidth
             sx={{ mb: 2 }}
@@ -161,7 +175,7 @@ function Tasks() {
           <TextField
             label="Expire Date"
             type="date"
-            value={editingTask?.expireDate}
+            value={editingTask?.expireDate || ''}
             onChange={(e) => setEditingTask({ ...editingTask, expireDate: e.target.value })}
             InputLabelProps={{ shrink: true }}
             fullWidth

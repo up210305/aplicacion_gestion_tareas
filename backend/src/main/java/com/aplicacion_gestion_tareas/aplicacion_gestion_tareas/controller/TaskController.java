@@ -7,13 +7,20 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.TaskDTO;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.UpdateTaskDTO;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.model.Task;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.service.TaskService;
-
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/tasks")
@@ -21,6 +28,20 @@ import org.springframework.web.bind.annotation.*;
 public class TaskController {
     @Autowired
     private TaskService taskService;
+
+    @PostMapping("/add")
+    public ResponseEntity<Task> addTask(@RequestBody Task task) {
+        Task createdTask = taskService.addTask(
+            task.getEmployee().getIdEmployee(),  // Obtener el ID del empleado del objeto
+            task.getTitle(),
+            task.getDescription(),
+            task.getExpireDate(),
+            task.getTaskList() != null ? task.getTaskList().getId() : null
+        );
+        return ResponseEntity.ok(createdTask);
+    }
+
+
 
     @GetMapping("/allTasks")
     public List<TaskDTO> getTasks() {

@@ -35,7 +35,7 @@ CREATE TABLE tasks (
   completed BOOLEAN,
   important BOOLEAN,
   id_employee BIGINT NOT NULL,
-  id_list BIGINT NOT NULL,
+  id_list BIGINT,
   CONSTRAINT FK_Emp_Task FOREIGN KEY (id_employee) 
     REFERENCES employees (id_employee),
   CONSTRAINT FK_List_Task FOREIGN KEY (id_list) 

@@ -45,6 +45,6 @@ public class Task {
     private Employee employee;
 
     @ManyToOne
-    @JoinColumn(name = "id_list", nullable = false)
+    @JoinColumn(name = "id_list")
     private TaskList taskList;
 }
