@@ -1,34 +1,37 @@
-import React, { useEffect, useState } from 'react';
 import WbSunnyIcon from '@mui/icons-material/WbSunny';
-import { Box, Card, CardContent, Grid, Typography, InputBase, Paper } from '@mui/material';
+import { Box, Card, CardContent, Grid, Paper, Typography } from '@mui/material';
 import axios from 'axios';
 import moment from 'moment-timezone'; // Importa moment-timezone
+import React, { useEffect, useState } from 'react';
 
 const Home = () => {
   const [tasks, setTasks] = useState([]);
+  const [filteredTasks, setFilteredTasks] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    const fetchTasksForToday = async () => {
-      try {
-        const response = await axios.get('http://localhost:8080/tasks/today');
-        console.log('Tasks received:', response.data); // Verifica las fechas aquí
-        setTasks(response.data);
-      } catch (error) {
-        console.error('Error fetching tasks:', error);
-      }
-    };
-
     fetchTasksForToday();
   }, []);
 
-  const handleSearch = (event) => {
-    setSearchTerm(event.target.value);
-  };
+  useEffect(() => {
+    const storedEmployeeId = parseInt(localStorage.employeeId, 10);
 
-  const filteredTasks = tasks.filter(task =>
-    task.title && task.title.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+    const filteredTasks = tasks.filter((task) => {
+      return task.employeeId === storedEmployeeId;
+    });
+
+    setFilteredTasks(filteredTasks);
+  }, [tasks]);
+
+  const fetchTasksForToday = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/tasks/today');
+      console.log('Tasks received:', response.data); // Verifica las fechas aquí
+      setTasks(response.data);
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
+    }
+  };
 
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
@@ -96,13 +99,6 @@ const Home = () => {
             borderRadius: 2
           }}
         >
-          <InputBase
-            sx={{ ml: 1, flex: 1 }}
-            placeholder="Search tasks"
-            inputProps={{ 'aria-label': 'Search tasks' }}
-            value={searchTerm}
-            onChange={handleSearch}
-          />
         </Paper>
       </Box>
     </Box>
