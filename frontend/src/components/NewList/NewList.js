@@ -2,38 +2,38 @@ import { Cancel, CheckCircle } from '@mui/icons-material';
 import { Box, IconButton, TextField, Typography } from '@mui/material';
 import axios from 'axios';
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 const NewList = ({ darkMode, onSave, onCancel }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const navigate = useNavigate();
 
-  // Obtener el ID del empleado del almacenamiento local
-  const employeeId = localStorage.getItem('employeeId');
+  // Obtener el ID del empleado del almacenamiento local y asegurarse de que sea un número
+  const employeeId = parseInt(localStorage.getItem('employeeId'), 10);
 
   const handleSave = async () => {
     if (!employeeId) {
       console.error('Employee ID is not available');
       return;
     }
+
     try {
       const response = await axios.post(
         'http://localhost:8080/api/lists',
-        { listName: title, description, employeeId } // Envia el cuerpo de la solicitud
+        { name: title, description, employeeId } // Asegúrate de que los nombres de los campos coincidan con los del backend
       );
-      console.log('List created:', response.data); // Agrega esto si quieres ver la respuesta
-      if (onSave) onSave(); // Llama al callback onSave si se proporciona
-      navigate('/list'); // Redirige a la página de listas
+      console.log('List created:', response.data);
+      setTitle(''); // Limpia el campo del título
+      setDescription(''); // Limpia el campo de descripción
+      if (onSave) onSave(); // Llama al callback onSave que debería cerrar el formulario y recargar la lista
     } catch (error) {
       console.error('Error creating list:', error);
     }
   };
-  
 
   const handleCancel = () => {
-    if (onCancel) onCancel(); // Llama al callback de cancelación si se proporciona
-    navigate('/list'); // Redirige a la página de listas si se cancela
+    setTitle(''); // Limpia el campo del título
+    setDescription(''); // Limpia el campo de descripción
+    if (onCancel) onCancel(); // Llama al callback de cancelación
   };
 
   return (
