@@ -1,7 +1,7 @@
 package com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.controller;
 
-import java.util.Optional;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,7 +39,7 @@ public class EmployeeController {
                     // Generar el token JWT usando el ID del empleado autenticado
                     String token = JwtUtil.generateToken(employee.getIdEmployee());
                     // Retornar el token en formato JSON
-                    return ResponseEntity.ok("{\"token\":\"" + token + "\", \"userId\":\"" + employee.getIdEmployee() + "\"}");
+                    return ResponseEntity.ok("{\"token\":\"" + token + "\", \"employeeId\":\"" + employee.getIdEmployee() + "\"}");
                 })
                 .orElseGet(() -> ResponseEntity.status(401).body("{\"message\": \"Invalid credentials\"}"));
     }
