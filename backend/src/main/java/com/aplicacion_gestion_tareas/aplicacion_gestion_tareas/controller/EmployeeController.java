@@ -49,30 +49,29 @@ public class EmployeeController {
         return ResponseEntity.ok(employeeService.getEmployee(id));
     }
 
-
-    @GetMapping({"/getUsername/{id}"})
+    @GetMapping("/getUsername/{id}")
     public ResponseEntity<String> getUsername(@PathVariable Long id) throws ExcepcionRecursoNoEncontrado {
         Optional<Employee> employeeOptional = employeeService.getEmployee(id);
         if (employeeOptional.isPresent()) {
             Employee employee = employeeOptional.get();
-        return ResponseEntity.ok(employee.getUsername());
+            return ResponseEntity.ok(employee.getUsername());
         } else {
-        throw new ExcepcionRecursoNoEncontrado("User not found");
+            throw new ExcepcionRecursoNoEncontrado("User not found");
         }
     }
 
-    @GetMapping ({ "/getUsernames"})
-    public ResponseEntity<List<String>> getUsernames(){
+    @GetMapping("/getUsernames")
+    public ResponseEntity<List<String>> getUsernames() {
         return ResponseEntity.ok(employeeService.getUsernames());
     }
 
-    @GetMapping({"/getEmployeeIdByUsername/{username}"})
-    public ResponseEntity<Long> getUserIdByUsername(@PathVariable String username) throws ExcepcionRecursoNoEncontrado{
+    @GetMapping("/getEmployeeIdByUsername/{username}")
+    public ResponseEntity<Long> getUserIdByUsername(@PathVariable String username) throws ExcepcionRecursoNoEncontrado {
         Long idEmployee = employeeService.findIdByUsername(username);
-        if (idEmployee!=null) {
-        return ResponseEntity.ok(employeeService.findIdByUsername(username));
+        if (idEmployee != null) {
+            return ResponseEntity.ok(employeeService.findIdByUsername(username));
         } else {
-        throw new ExcepcionRecursoNoEncontrado("Username doesn't exist");
+            throw new ExcepcionRecursoNoEncontrado("Username doesn't exist");
         }
     }
 
@@ -80,10 +79,10 @@ public class EmployeeController {
     public ResponseEntity<String> delUser(@PathVariable Long id) throws ExcepcionRecursoNoEncontrado {
         Optional<Employee> employeeToDelete = employeeService.getEmployee(id);
         if (employeeToDelete.isPresent()) {
-        employeeService.delete(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Employee " + id + " succesfully deleted");
+            employeeService.delete(id);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Employee " + id + " successfully deleted");
         } else {
-        throw new ExcepcionRecursoNoEncontrado("Employee " + id  + " not found within the database. Unable to delete");
+            throw new ExcepcionRecursoNoEncontrado("Employee " + id + " not found within the database. Unable to delete");
         }
     }
 

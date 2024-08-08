@@ -9,10 +9,9 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { styled } from '@mui/system';
 import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import zglogo from '../../assets/images/zglogo.png';
 
-// Styled components
 const StyledContainer = styled(Container)(({ theme }) => ({
   height: '100vh',
   display: 'flex',
@@ -20,8 +19,8 @@ const StyledContainer = styled(Container)(({ theme }) => ({
   alignItems: 'center',
   overflow: 'hidden',
   backgroundColor: theme.palette.mode === 'dark'
-    ? 'rgba(15, 41, 91, 255)' // Dark mode blue
-    : 'rgba(0, 48, 135, 255)', // Light mode blue
+    ? 'rgba(15, 41, 91, 255)' 
+    : 'rgba(0, 48, 135, 255)', 
 }));
 
 const StyledBox = styled(Box)(({ theme }) => ({
@@ -46,16 +45,41 @@ const StyledAvatar = styled(Box)(({ theme }) => ({
 
 export default function SignUp() {
   const theme = useTheme();
+  const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault();
     const data = new FormData(event.currentTarget);
-    console.log({
+
+    const employee = {
       firstName: data.get('firstName'),
       lastName: data.get('lastName'),
       username: data.get('username'),
       password: data.get('password'),
-    });
+    };
+
+    fetch('http://localhost:8080/api/auth/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(employee),
+    })
+      .then(response => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error('Error en el registro');
+        }
+      })
+      .then(data => {
+        console.log('Success:', data);
+        navigate('/'); // Redirige al usuario después de un registro exitoso
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        // Maneja el error aquí
+      });
   };
 
   return (
