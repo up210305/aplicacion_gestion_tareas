@@ -1,380 +1,108 @@
-import {
-  Bookmark,
-  BookmarkBorder,
-  CheckCircle,
-  Delete,
-  Edit,
-} from "@mui/icons-material";
-import {
-  Alert,
-  Box,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  IconButton,
-  ListItem,
-  ListItemText,
-  List as MUIList,
-  Snackbar,
-  Typography,
-} from "@mui/material";
-import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import AddTask from "../AddTask";
-import EditListDialog from "../EditListDialog/"; // Importa el componente de edición
-import { formatDate } from "../Formatter/FormatDate"; // Ajusta la ruta según tu estructura de carpetas
+import WbSunnyIcon from '@mui/icons-material/WbSunny';
+import { Box, Card, CardContent, Grid, Paper, Typography } from '@mui/material';
+import axios from 'axios';
+import moment from 'moment-timezone'; // Importa moment-timezone
+import React, { useEffect, useState } from 'react';
 
-// Componente TaskItem
-const TaskItem = ({
-  task,
-  onToggleImportant,
-  onToggleComplete,
-  onDelete,
-  onEdit,
-  darkMode,
-}) => (
-  <ListItem
-    sx={{
-      display: "flex",
-      justifyContent: "space-between",
-      backgroundColor: darkMode ? "rgb(129,165,202)" : "#ccc",
-      marginBottom: "10px",
-      borderRadius: "4px",
-      color: darkMode ? "white" : "inherit",
-    }}
-  >
-    <Box>
-      <ListItemText
-        primary={task.title}
-        secondary={`Created: ${formatDate(task.creationDate)} | Due: ${
-          formatDate(task.expireDate) || "N/A"
-        }`}
-        sx={{ color: darkMode ? "white" : "inherit" }}
-      />
-    </Box>
-    <Box>
-      <IconButton
-        onClick={() => onToggleComplete(task)}
-        sx={{
-          color: task.completed
-            ? "#4caf50"
-            : darkMode
-            ? "#fff"
-            : "rgba(0, 0, 0, 0.54)",
-        }}
-      >
-        <CheckCircle />
-      </IconButton>
-      <IconButton
-        onClick={() => onToggleImportant(task)}
-        sx={{
-          color: task.important
-            ? "#ff9800"
-            : darkMode
-            ? "#fff"
-            : "rgba(0, 0, 0, 0.54)",
-        }}
-      >
-        {task.important ? <Bookmark /> : <BookmarkBorder />}
-      </IconButton>
-      <IconButton
-        onClick={() => onDelete(task)}
-        sx={{ color: darkMode ? "#f44336" : "rgba(0, 0, 0, 0.54)" }}
-      >
-        <Delete />
-      </IconButton>
-      <IconButton
-        onClick={() => onEdit(task.id_task)}
-        sx={{ color: darkMode ? "#1976d2" : "rgba(0, 0, 0, 0.54)" }}
-      >
-        <Edit />
-      </IconButton>
-    </Box>
-  </ListItem>
-);
-
-const TaskList = ({ darkMode }) => {
-  const { listId } = useParams();
-  const navigate = useNavigate();
+const Home = () => {
   const [tasks, setTasks] = useState([]);
-  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
-  const [taskToDelete, setTaskToDelete] = useState(null);
-  const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [listTitle, setListTitle] = useState("");
-  const [listDescription, setListDescription] = useState("");
-  const [openEditDialog, setOpenEditDialog] = useState(false); // Estado para el diálogo de edición
+  const [filteredTasks, setFilteredTasks] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
-    const fetchTasksAndList = async () => {
-      if (listId) {
-        try {
-          const [responseTasks, responseList] = await Promise.all([
-            axios
-              .get(`http://164.90.247.244:8080/api/lists/${listId}/tasks`)
-              .catch((error) => {
-                console.error("Error fetching tasks:", error);
-                return { data: [] };
-              }),
-            axios
-              .get(`http://164.90.247.244:8080/api/lists/${listId}`)
-              .catch((error) => {
-                console.error("Error fetching list details:", error);
-                return { data: { name: "", description: "" } };
-              }),
-          ]);
+    fetchTasksForToday();
+  }, []);
 
-          setTasks(responseTasks.data);
-          setListTitle(responseList.data.name);
-          setListDescription(responseList.data.description);
-        } catch (error) {
-          console.error("Unexpected error:", error);
-        }
-      } else {
-        console.error("listId is undefined or null");
-      }
-    };
+  useEffect(() => {
+    const storedEmployeeId = parseInt(localStorage.employeeId, 10);
 
-    fetchTasksAndList();
-  }, [listId]);
+    const filteredTasks = tasks.filter((task) => {
+      return task.employeeId === storedEmployeeId;
+    });
 
-  const handleToggleImportant = async (task) => {
-    if (!task || !task.id_task) {
-      console.error("Invalid task:", task);
-      return;
-    }
+    setFilteredTasks(filteredTasks);
+  }, [tasks]);
 
+  const fetchTasksForToday = async () => {
     try {
-      await axios.patch(`http://164.90.247.244:8080/api/tasks/${task.id_task}`, {
-        important: !task.important,
-      });
-      task.important = !task.important;
-      setTasks(tasks.map((t) => (t.id_task === task.id_task ? task : t)));
-      if (task.important) {
-        setSnackbarOpen(true);
-      }
+      const response = await axios.get('http://164.90:8080/tasks/today');
+      console.log('Tasks received:', response.data); // Verifica las fechas aquí
+      setTasks(response.data);
     } catch (error) {
-      console.error("Error updating task importance:", error);
+      console.error('Error fetching tasks:', error);
     }
   };
 
-  const handleToggleComplete = async (task) => {
-    if (!task || !task.id_task) {
-      console.error("Invalid task:", task);
-      return;
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = moment.utc(dateString).local(); // Convierte a la zona horaria local
+    if (!date.isValid()) {
+      console.error('Invalid date:', dateString);
+      return 'Invalid Date';
     }
 
-    try {
-      await axios.patch(`http://164.90.247.244:8080/api/tasks/${task.id_task}`, {
-        completed: !task.completed,
-      });
-      task.completed = !task.completed;
-      setTasks(tasks.map((t) => (t.id_task === task.id_task ? task : t)));
-    } catch (error) {
-      console.error("Error updating task completion:", error);
-    }
-  };
-
-  const handleDelete = (task) => {
-    setTaskToDelete(task);
-    setOpenDeleteDialog(true);
-  };
-
-  const confirmDeleteTask = async () => {
-    try {
-      await axios.delete(
-        `http://164.90.247.244:8080/api/tasks/${taskToDelete.id_task}`
-      );
-      setTasks(tasks.filter((task) => task.id_task !== taskToDelete.id_task));
-      setOpenDeleteDialog(false);
-    } catch (error) {
-      console.error("Error deleting task:", error);
-    }
-  };
-
-  const handleDeleteList = async () => {
-    if (!listId) {
-      console.error("Invalid listId:", listId);
-      return;
-    }
-    try {
-      await axios.delete(`http://164.90.247.244:8080/api/lists/${listId}`);
-      navigate("/list");
-    } catch (error) {
-      console.error("Error deleting list:", error);
-    }
-  };
-
-  const handleCloseDeleteDialog = () => {
-    setOpenDeleteDialog(false);
-  };
-
-  const handleEditList = () => {
-    setOpenEditDialog(true); // Abre el diálogo de edición
-  };
-
-  const handleCloseEditDialog = () => {
-    setOpenEditDialog(false); // Cierra el diálogo de edición
-  };
-
-  const handleUpdateList = async (title, description) => {
-    try {
-      await axios.patch(`http://164.90.247.244:8080/api/lists/${listId}`, {
-        name: title,
-        description,
-      });
-      setListTitle(title);
-      setListDescription(description);
-      handleCloseEditDialog();
-    } catch (error) {
-      console.error("Error updating list:", error);
-    }
-  };
-
-  const handleSnackbarClose = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
-    }
-    setSnackbarOpen(false);
-  };
-
-  const handleAddTask = async (taskName, dueDate) => {
-    try {
-      const validListId = listId && !isNaN(listId) ? parseInt(listId) : null;
-      if (!validListId) {
-        console.error("Invalid listId:", listId);
-        return;
-      }
-      const response = await axios.post("http://164.90.247.244:8080/api/tasks", {
-        task_title: taskName,
-        expire_date: dueDate,
-        id_list: validListId,
-      });
-      const newTask = response.data;
-      setTasks([...tasks, newTask]);
-    } catch (error) {
-      console.error("Error adding task:", error);
-    }
-  };
-
-  const handleEdit = (taskId) => {
-    // Aquí puedes agregar la lógica para manejar la edición de la tarea
-    console.log(`Editing task with ID: ${taskId}`);
-    // Implementar lógica adicional si es necesario
+    // Ajustar el mes y el día
+    const adjustedDate = date.clone().subtract(1, 'months').add(1, 'days');
+    
+    return adjustedDate.format('MMMM DD, YYYY');
   };
 
   return (
-    <Box
-      sx={{
-        flex: 1,
-        p: 2,
-        display: "flex",
-        flexDirection: "column",
-        height: "100vh",
+    <Box 
+      sx={{ 
+        padding: 4, 
+        height: '100vh', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        justifyContent: 'space-between'
       }}
     >
-      <Box
-        sx={{
-          backgroundColor: darkMode ? "rgb(60,101,156)" : "#e0e0e0",
-          color: darkMode ? "white" : "inherit",
-          borderRadius: "4px",
-          padding: "10px",
-          marginBottom: "20px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Box>
-          <Typography variant="h5" gutterBottom>
-            {listTitle || "List Title"}
-          </Typography>
-          <Typography variant="body1">
-            {listDescription || "List Description"}
-          </Typography>
-        </Box>
-        <Box>
-          <IconButton
-            onClick={handleEditList} // Abre el diálogo de edición
-            sx={{ color: darkMode ? "#1976d2" : "rgba(0, 0, 0, 0.54)" }}
-          >
-            <Edit />
-          </IconButton>
-          <IconButton
-            onClick={() => handleDeleteList()}
-            sx={{ color: darkMode ? "#f44336" : "rgba(0, 0, 0, 0.54)" }}
-          >
-            <Delete />
-          </IconButton>
-        </Box>
+      <Box>
+        <Grid item xs={12}>
+          <Box display="flex" alignItems="center" mb={2}>
+            <WbSunnyIcon fontSize="large" />
+            <Typography variant="h5" ml={1}>Today</Typography>
+          </Box>
+          <Grid container spacing={2}>
+            {filteredTasks.map((task, index) => (
+              <Grid item xs={12} md={4} key={index}>
+                <Card>
+                  <CardContent>
+                    <Typography variant="h6" color="textPrimary">
+                      {task.title}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      {task.description}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      Created: {formatDate(task.creationDate)}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      Due: {formatDate(task.expireDate)}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Grid>
       </Box>
-      <Box
-        sx={{
-          flex: 1,
-          overflowY: "auto",
-        }}
-      >
-        <MUIList
-          sx={{
-            backgroundColor: darkMode ? "rgb(60,101,156)" : "#e0e0e0",
-            color: darkMode ? "white" : "inherit",
-            borderRadius: "4px",
-            padding: "10px",
-            paddingBottom: "70px",
+
+      <Box sx={{ position: 'fixed', bottom: 16, left: '50%', transform: 'translateX(-50%)', width: '50%' }}>
+        <Paper 
+          component="form"
+          sx={{ 
+            p: '2px 4px', 
+            display: 'flex', 
+            alignItems: 'center', 
+            boxShadow: 1,
+            borderRadius: 2
           }}
         >
-          {tasks.map((task) => (
-            <TaskItem
-              key={task.id_task}
-              task={task}
-              onToggleImportant={handleToggleImportant}
-              onToggleComplete={handleToggleComplete}
-              onDelete={handleDelete}
-              onEdit={handleEdit} // Pasa la función handleEdit aquí
-              darkMode={darkMode}
-            />
-          ))}
-        </MUIList>
+        </Paper>
       </Box>
-      <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
-        <DialogTitle>Delete Task</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to delete this task?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseDeleteDialog} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={confirmDeleteTask} color="primary">
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
-      <Snackbar
-        open={snackbarOpen}
-        autoHideDuration={3000}
-        onClose={handleSnackbarClose}
-      >
-        <Alert onClose={handleSnackbarClose} severity="success">
-          Task marked as important!
-        </Alert>
-      </Snackbar>
-      <AddTask darkMode={darkMode} onAddTask={handleAddTask} />
-      <EditListDialog
-        open={openEditDialog}
-        onClose={handleCloseEditDialog}
-        listId={listId}
-        currentTitle={listTitle}
-        currentDescription={listDescription}
-        onUpdate={handleUpdateList}
-      />
     </Box>
   );
-};
+}
 
-export default TaskList;
+export default Home;

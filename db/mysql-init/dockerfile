@@ -1,0 +1,7 @@
+FROM mysql:5.7
+CMD ["--explicit_defaults_for_timestamp=ON"]
+ENV MYSQL_ROOT_PASSWORD=root
+ENV MYSQL_DATABASE=GESTION_TAREAS
+ENV MYSQL_USER=admin
+ENV MYSQL_PASSWORD=admin
+COPY ./init.sql /docker-entrypoint-initdb.d/
