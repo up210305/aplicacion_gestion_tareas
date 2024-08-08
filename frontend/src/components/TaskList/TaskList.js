@@ -19,6 +19,8 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import AddTask from "../AddTask";
+import { formatDate } from '../Formatter/FormatDate'; // Ajusta la ruta según tu estructura de carpetas
+
 
 const TaskItem = ({ task, onToggleImportant, onToggleComplete, onDelete, onEdit, darkMode }) => (
   <ListItem
@@ -33,8 +35,8 @@ const TaskItem = ({ task, onToggleImportant, onToggleComplete, onDelete, onEdit,
   >
     <Box>
       <ListItemText
-        primary={task.task_title}
-        secondary={`Created: ${task.creation_date} | Due: ${task.expire_date || "N/A"}`}
+        primary={task.title}
+        secondary={`Created: ${formatDate(task.creationDate)} | Due: ${formatDate(task.expireDate) || "N/A"}`}
         sx={{ color: darkMode ? "white" : "inherit" }}
       />
     </Box>
