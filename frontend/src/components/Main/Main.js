@@ -44,9 +44,9 @@ function Main() {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const userId = localStorage.getItem('userId');
-        if (userId) {
-          const response = await axios.get(`http://localhost:8080/api/auth/getEmployee/${userId}`);
+        const employeeId = localStorage.getItem('employeeId');
+        if (employeeId) {
+          const response = await axios.get(`http://localhost:8080/api/auth/getEmployee/${employeeId}`);
           setUser({
             firstName: response.data.firstName,
             lastName: response.data.lastName,
