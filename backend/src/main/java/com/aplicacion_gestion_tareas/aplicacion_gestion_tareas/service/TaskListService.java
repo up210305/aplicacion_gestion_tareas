@@ -55,7 +55,17 @@ public class TaskListService {
         return taskListMapper.toTaskListDTO(savedTaskList);
     }
 
-    public void deleteTaskList(Long id) {
+    public void deleteList(Long id) {
         taskListRepository.deleteById(id);
+    }
+
+    public TaskList updateTaskList(Long id, TaskList updatedTaskList) {
+        return taskListRepository.findById(id)
+                .map(taskList -> {
+                    taskList.setName(updatedTaskList.getName());
+                    taskList.setDescription(updatedTaskList.getDescription());
+                    return taskListRepository.save(taskList);
+                })
+                .orElse(null);
     }
 }
