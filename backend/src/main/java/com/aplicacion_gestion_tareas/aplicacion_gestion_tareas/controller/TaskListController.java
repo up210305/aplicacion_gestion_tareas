@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.TaskDTO;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.TaskListDTO;
+import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.model.TaskList;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.service.TaskListService;
 
 @CrossOrigin(origins = "http://localhost:3000")
@@ -53,9 +55,20 @@ public class TaskListController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedTaskListDTO);
     }
 
-    @DeleteMapping("/{listid}")
-    public ResponseEntity<Void> deleteList(@PathVariable Long id) {
-        taskListService.deleteList(id);
+    @DeleteMapping("/{listId}")
+    public ResponseEntity<Void> deleteList(@PathVariable Long listId) {
+        taskListService.deleteList(listId);
         return ResponseEntity.noContent().build();
+    }
+    
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<TaskList> updateTaskList(@PathVariable("id") Long id, @RequestBody TaskList updatedTaskList) {
+        TaskList updated = taskListService.updateTaskList(id, updatedTaskList);
+        if (updated != null) {
+            return ResponseEntity.ok(updated);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 }

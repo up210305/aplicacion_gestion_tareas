@@ -1,4 +1,10 @@
-import { Bookmark, BookmarkBorder, CheckCircle, Delete, Edit } from "@mui/icons-material";
+import {
+  Bookmark,
+  BookmarkBorder,
+  CheckCircle,
+  Delete,
+  Edit,
+} from "@mui/icons-material";
 import {
   Alert,
   Box,
@@ -19,13 +25,23 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import AddTask from "../AddTask";
+import EditListDialog from "../EditListDialog/"; // Importa el componente de edición
+import { formatDate } from "../Formatter/FormatDate"; // Ajusta la ruta según tu estructura de carpetas
 
-const TaskItem = ({ task, onToggleImportant, onToggleComplete, onDelete, onEdit, darkMode }) => (
+// Componente TaskItem
+const TaskItem = ({
+  task,
+  onToggleImportant,
+  onToggleComplete,
+  onDelete,
+  onEdit,
+  darkMode,
+}) => (
   <ListItem
     sx={{
       display: "flex",
       justifyContent: "space-between",
-      backgroundColor: darkMode ? "rgb(129,165,202)" : "#ccc", // Specific shading color for task items
+      backgroundColor: darkMode ? "rgb(129,165,202)" : "#ccc",
       marginBottom: "10px",
       borderRadius: "4px",
       color: darkMode ? "white" : "inherit",
@@ -33,8 +49,10 @@ const TaskItem = ({ task, onToggleImportant, onToggleComplete, onDelete, onEdit,
   >
     <Box>
       <ListItemText
-        primary={task.task_title}
-        secondary={`Created: ${task.creation_date} | Due: ${task.expire_date || "N/A"}`}
+        primary={task.title}
+        secondary={`Created: ${formatDate(task.creationDate)} | Due: ${
+          formatDate(task.expireDate) || "N/A"
+        }`}
         sx={{ color: darkMode ? "white" : "inherit" }}
       />
     </Box>
@@ -42,7 +60,11 @@ const TaskItem = ({ task, onToggleImportant, onToggleComplete, onDelete, onEdit,
       <IconButton
         onClick={() => onToggleComplete(task)}
         sx={{
-          color: task.completed ? "#4caf50" : darkMode ? "#fff" : "rgba(0, 0, 0, 0.54)",
+          color: task.completed
+            ? "#4caf50"
+            : darkMode
+            ? "#fff"
+            : "rgba(0, 0, 0, 0.54)",
         }}
       >
         <CheckCircle />
@@ -50,7 +72,11 @@ const TaskItem = ({ task, onToggleImportant, onToggleComplete, onDelete, onEdit,
       <IconButton
         onClick={() => onToggleImportant(task)}
         sx={{
-          color: task.important ? "#ff9800" : darkMode ? "#fff" : "rgba(0, 0, 0, 0.54)",
+          color: task.important
+            ? "#ff9800"
+            : darkMode
+            ? "#fff"
+            : "rgba(0, 0, 0, 0.54)",
         }}
       >
         {task.important ? <Bookmark /> : <BookmarkBorder />}
@@ -80,24 +106,27 @@ const TaskList = ({ darkMode }) => {
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [listTitle, setListTitle] = useState("");
   const [listDescription, setListDescription] = useState("");
+  const [openEditDialog, setOpenEditDialog] = useState(false); // Estado para el diálogo de edición
 
   useEffect(() => {
     const fetchTasksAndList = async () => {
       if (listId) {
         try {
-          // Ejecuta ambas peticiones en paralelo
           const [responseTasks, responseList] = await Promise.all([
-            axios.get(`http://localhost:8080/api/lists/${listId}/tasks`).catch((error) => {
-              console.error("Error fetching tasks:", error);
-              return { data: [] }; // Retorna una respuesta vacía en caso de error
-            }),
-            axios.get(`http://localhost:8080/api/lists/${listId}`).catch((error) => {
-              console.error("Error fetching list details:", error);
-              return { data: { name: '', description: '' } }; // Retorna una respuesta vacía en caso de error
-            }),
+            axios
+              .get(`http://localhost:8080/api/lists/${listId}/tasks`)
+              .catch((error) => {
+                console.error("Error fetching tasks:", error);
+                return { data: [] };
+              }),
+            axios
+              .get(`http://localhost:8080/api/lists/${listId}`)
+              .catch((error) => {
+                console.error("Error fetching list details:", error);
+                return { data: { name: "", description: "" } };
+              }),
           ]);
-  
-          // Procesa las respuestas
+
           setTasks(responseTasks.data);
           setListTitle(responseList.data.name);
           setListDescription(responseList.data.description);
@@ -108,7 +137,7 @@ const TaskList = ({ darkMode }) => {
         console.error("listId is undefined or null");
       }
     };
-  
+
     fetchTasksAndList();
   }, [listId]);
 
@@ -156,7 +185,9 @@ const TaskList = ({ darkMode }) => {
 
   const confirmDeleteTask = async () => {
     try {
-      await axios.delete(`http://localhost:8080/api/tasks/${taskToDelete.id_task}`);
+      await axios.delete(
+        `http://localhost:8080/api/tasks/${taskToDelete.id_task}`
+      );
       setTasks(tasks.filter((task) => task.id_task !== taskToDelete.id_task));
       setOpenDeleteDialog(false);
     } catch (error) {
@@ -171,7 +202,7 @@ const TaskList = ({ darkMode }) => {
     }
     try {
       await axios.delete(`http://localhost:8080/api/lists/${listId}`);
-      navigate('/list'); // Redirige a la lista de listas después de la eliminación
+      navigate("/list");
     } catch (error) {
       console.error("Error deleting list:", error);
     }
@@ -181,8 +212,26 @@ const TaskList = ({ darkMode }) => {
     setOpenDeleteDialog(false);
   };
 
-  const handleEdit = (taskId) => {
-    console.log("Edit task:", taskId);
+  const handleEditList = () => {
+    setOpenEditDialog(true); // Abre el diálogo de edición
+  };
+
+  const handleCloseEditDialog = () => {
+    setOpenEditDialog(false); // Cierra el diálogo de edición
+  };
+
+  const handleUpdateList = async (title, description) => {
+    try {
+      await axios.patch(`http://localhost:8080/api/lists/${listId}`, {
+        name: title,
+        description,
+      });
+      setListTitle(title);
+      setListDescription(description);
+      handleCloseEditDialog();
+    } catch (error) {
+      console.error("Error updating list:", error);
+    }
   };
 
   const handleSnackbarClose = (event, reason) => {
@@ -211,11 +260,25 @@ const TaskList = ({ darkMode }) => {
     }
   };
 
+  const handleEdit = (taskId) => {
+    // Aquí puedes agregar la lógica para manejar la edición de la tarea
+    console.log(`Editing task with ID: ${taskId}`);
+    // Implementar lógica adicional si es necesario
+  };
+
   return (
-    <Box sx={{ flex: 1, p: 2, display: "flex", flexDirection: "column", height: "100vh" }}>
+    <Box
+      sx={{
+        flex: 1,
+        p: 2,
+        display: "flex",
+        flexDirection: "column",
+        height: "100vh",
+      }}
+    >
       <Box
         sx={{
-          backgroundColor: darkMode ? "rgb(60,101,156)" : "#e0e0e0", // General shading color
+          backgroundColor: darkMode ? "rgb(60,101,156)" : "#e0e0e0",
           color: darkMode ? "white" : "inherit",
           borderRadius: "4px",
           padding: "10px",
@@ -235,7 +298,7 @@ const TaskList = ({ darkMode }) => {
         </Box>
         <Box>
           <IconButton
-            onClick={() => console.log("Edit list")}
+            onClick={handleEditList} // Abre el diálogo de edición
             sx={{ color: darkMode ? "#1976d2" : "rgba(0, 0, 0, 0.54)" }}
           >
             <Edit />
@@ -256,7 +319,7 @@ const TaskList = ({ darkMode }) => {
       >
         <MUIList
           sx={{
-            backgroundColor: darkMode ? "rgb(60,101,156)" : "#e0e0e0", // General shading color
+            backgroundColor: darkMode ? "rgb(60,101,156)" : "#e0e0e0",
             color: darkMode ? "white" : "inherit",
             borderRadius: "4px",
             padding: "10px",
@@ -265,12 +328,12 @@ const TaskList = ({ darkMode }) => {
         >
           {tasks.map((task) => (
             <TaskItem
-              key={task.id_task} // Ensure this property is unique
+              key={task.id_task}
               task={task}
               onToggleImportant={handleToggleImportant}
               onToggleComplete={handleToggleComplete}
               onDelete={handleDelete}
-              onEdit={handleEdit}
+              onEdit={handleEdit} // Pasa la función handleEdit aquí
               darkMode={darkMode}
             />
           ))}
@@ -302,6 +365,14 @@ const TaskList = ({ darkMode }) => {
         </Alert>
       </Snackbar>
       <AddTask darkMode={darkMode} onAddTask={handleAddTask} />
+      <EditListDialog
+        open={openEditDialog}
+        onClose={handleCloseEditDialog}
+        listId={listId}
+        currentTitle={listTitle}
+        currentDescription={listDescription}
+        onUpdate={handleUpdateList}
+      />
     </Box>
   );
 };
