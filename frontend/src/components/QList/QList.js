@@ -7,21 +7,32 @@ import NewList from '../NewList';
 
 const QList = ({ darkMode }) => {
   const [lists, setLists] = useState([]);
+  const [filteredLists, setFilteredLists] = useState([]);
   const [showNewList, setShowNewList] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchLists = async () => {
-      try {
-        const response = await axios.get('http://localhost:8080/api/lists');
-        setLists(response.data);
-      } catch (error) {
-        console.error('Error fetching lists:', error);
-      }
-    };
-
-    fetchLists();
+    fetchLists(); // Llama a fetchLists cuando el componente se monte
   }, []);
+
+  useEffect(() => {
+    const storedEmployeeId = parseInt(localStorage.employeeId, 10);
+  
+    const filteredLists = lists.filter((list) => {
+      return list.employeeId === storedEmployeeId;
+    });
+
+    setFilteredLists(filteredLists);
+  }, [lists]);
+
+  const fetchLists = async () => {
+    try {
+      const response = await axios.get('http://localhost:8080/api/lists');
+      setLists(response.data);
+    } catch (error) {
+      console.error('Error fetching lists:', error);
+    }
+  };
 
   const handleListClick = (listId) => {
     if (listId) {
@@ -32,15 +43,9 @@ const QList = ({ darkMode }) => {
     }
   };
 
-  const handleAddList = async (title, description) => {
-    try {
-      const newList = { name: title, description, employeeId: 1 }; // Ajusta employeeId según tu lógica
-      const response = await axios.post('http://localhost:8080/api/lists', newList);
-      setLists([...lists, response.data]);
-      setShowNewList(false);
-    } catch (error) {
-      console.error('Error adding new list:', error);
-    }
+  const handleAddList = async () => {
+    await fetchLists(); // Recarga la lista después de agregar una nueva lista
+    setShowNewList(false); // Cierra el formulario
   };
 
   return (
@@ -50,6 +55,8 @@ const QList = ({ darkMode }) => {
         backgroundColor: darkMode ? 'rgb(60,101,156)' : '#f5f5f5',
         borderRadius: '12px',
         color: darkMode ? 'white' : 'inherit',
+        maxHeight: 'calc(100vh - 64px)', // Ajusta según la altura que desees
+        overflowY: 'auto', // Permite el scroll vertical
       }}
     >
       <Typography
@@ -60,7 +67,7 @@ const QList = ({ darkMode }) => {
         My Lists
       </Typography>
       <List>
-        {lists.map((list) => (
+      {filteredLists.map((list) => (
           <ListItem
             key={list.id}
             sx={{
@@ -82,7 +89,8 @@ const QList = ({ darkMode }) => {
       </List>
       {showNewList ? (
         <NewList
-          onSave={(title, description) => handleAddList(title, description)}
+          darkMode={darkMode} // Asegúrate de pasar darkMode si es necesario
+          onSave={handleAddList} // Pasa handleAddList para manejar la adición y recarga
           onCancel={() => setShowNewList(false)}
         />
       ) : (
