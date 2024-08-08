@@ -1,26 +1,39 @@
-// src/components/NewList.js
+import { Cancel, CheckCircle } from '@mui/icons-material';
+import { Box, IconButton, TextField, Typography } from '@mui/material';
+import axios from 'axios';
 import React, { useState } from 'react';
-import { Box, TextField, Typography, IconButton } from '@mui/material';
-import { CheckCircle, Cancel } from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
 
 const NewList = ({ darkMode, onSave, onCancel }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const navigate = useNavigate();
 
-  const handleSave = () => {
-    if (onSave) {
-      onSave(title, description); // Pass the title and description to the onSave callback
-      setTitle('');
-      setDescription('');
-      navigate('/list'); // Redirect to the QList page
+  // Obtener el ID del empleado del almacenamiento local y asegurarse de que sea un número
+  const employeeId = parseInt(localStorage.getItem('employeeId'), 10);
+
+  const handleSave = async () => {
+    if (!employeeId) {
+      console.error('Employee ID is not available');
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        'http://localhost:8080/api/lists',
+        { name: title, description, employeeId } // Asegúrate de que los nombres de los campos coincidan con los del backend
+      );
+      console.log('List created:', response.data);
+      setTitle(''); // Limpia el campo del título
+      setDescription(''); // Limpia el campo de descripción
+      if (onSave) onSave(); // Llama al callback onSave que debería cerrar el formulario y recargar la lista
+    } catch (error) {
+      console.error('Error creating list:', error);
     }
   };
 
   const handleCancel = () => {
-    if (onCancel) onCancel(); // Call the onCancel callback if provided
-    navigate('/list'); // Redirect to the QList page if canceled
+    setTitle(''); // Limpia el campo del título
+    setDescription(''); // Limpia el campo de descripción
+    if (onCancel) onCancel(); // Llama al callback de cancelación
   };
 
   return (

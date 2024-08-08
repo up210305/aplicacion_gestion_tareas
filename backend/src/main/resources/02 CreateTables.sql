@@ -1,29 +1,43 @@
--- Base de datos: full
-use GESTION_TAREAS;
+USE GESTION_TAREAS;
 
+-- Elimina las tablas si existen
+DROP TABLE IF EXISTS tasks;
+DROP TABLE IF EXISTS lists;
+DROP TABLE IF EXISTS employees;
+
+-- Crear tabla employees
 CREATE TABLE employees (
-  id_employee int(10) AUTO_INCREMENT PRIMARY KEY,
-  last_name varchar(20) NOT NULL,
-  first_name varchar(10) NOT NULL,
-  username varchar(100) NOT NULL,
-  password varchar(100) NOT NULL,
-  active  boolean
+  id_employee BIGINT AUTO_INCREMENT PRIMARY KEY,
+  last_name VARCHAR(20) NOT NULL,
+  first_name VARCHAR(10) NOT NULL,
+  username VARCHAR(100) NOT NULL,
+  password VARCHAR(100) NOT NULL,
+  active BOOLEAN
 );
 
+-- Crear tabla lists con referencia a employees
+CREATE TABLE lists (
+  id_list BIGINT AUTO_INCREMENT PRIMARY KEY,
+  list_name VARCHAR(255) NOT NULL,
+  description VARCHAR(255),
+  id_employee BIGINT NOT NULL,
+  CONSTRAINT FK_Emp_List FOREIGN KEY (id_employee) 
+    REFERENCES employees (id_employee)
+);
+
+-- Crear tabla tasks con referencia a lists y employees
 CREATE TABLE tasks (
-  id_task int(10) AUTO_INCREMENT PRIMARY KEY,
-  id_employee int(10),
-  task_date date,
-  task_details char,
-  CONSTRAINT Emp_Ord FOREIGN KEY (id_employee) 
-            REFERENCES employees (id_employee)
+  id_task BIGINT AUTO_INCREMENT PRIMARY KEY,
+  task_title VARCHAR(255) NOT NULL,
+  task_description VARCHAR(255),
+  creation_date DATE NOT NULL,
+  expire_date DATE,
+  completed BOOLEAN,
+  important BOOLEAN,
+  id_employee BIGINT NOT NULL,
+  id_list BIGINT NOT NULL,
+  CONSTRAINT FK_Emp_Task FOREIGN KEY (id_employee) 
+    REFERENCES employees (id_employee),
+  CONSTRAINT FK_List_Task FOREIGN KEY (id_list) 
+    REFERENCES lists (id_list)
 );
-
-CREATE TABLE taskDetails (
-  id_task int(10),
-  quantity smallint(5),
-  discount double,
-  CONSTRAINT PRIMARY_KEY PRIMARY KEY(id_order, id_product),
-  CONSTRAINT ord_det FOREIGN KEY (id_order)   REFERENCES orders (id_order),
-  CONSTRAINT det_pro FOREIGN KEY (id_product) REFERENCES products (id_product)
-  );
