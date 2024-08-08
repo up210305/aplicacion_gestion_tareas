@@ -37,9 +37,16 @@ public class TaskService {
     public List<TaskDTO> getTasksForToday(LocalDate today) {
         LocalDateTime startDate = today.atStartOfDay();
         LocalDateTime endDate = today.atTime(23, 59, 59, 999_999_999);
+        
         List<Task> tasks = taskRepository.findByExpireDate(startDate, endDate);
-        return tasks.stream().map(taskMapper::toTaskDTO).collect(Collectors.toList());
+        List<TaskDTO> taskDTOs = tasks.stream().map(taskMapper::toTaskDTO).collect(Collectors.toList());
+    
+        // Añade un log para verificar las fechas
+        taskDTOs.forEach(task -> System.out.println("Task expire date: " + task.getExpireDate()));
+    
+        return taskDTOs;
     }
+
     
     
     
