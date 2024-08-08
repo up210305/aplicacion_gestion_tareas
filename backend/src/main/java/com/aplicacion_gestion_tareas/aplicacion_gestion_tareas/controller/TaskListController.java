@@ -20,7 +20,7 @@ import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.TaskListDTO;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.model.TaskList;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.service.TaskListService;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://164.90.247.244:3000")
 @RestController
 @RequestMapping("/api/lists")
 public class TaskListController {

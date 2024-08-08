@@ -18,7 +18,7 @@ const NewList = ({ darkMode, onSave, onCancel }) => {
 
     try {
       const response = await axios.post(
-        'http://localhost:8080/api/lists',
+        'http://164.90.247.244:8080/api/lists',
         { name: title, description, employeeId } // Asegúrate de que los nombres de los campos coincidan con los del backend
       );
       console.log('List created:', response.data);

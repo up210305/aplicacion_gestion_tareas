@@ -15,7 +15,7 @@ const [description, setDescription] = useState(currentDescription);
 
 const handleSave = async () => {
   try {
-    await axios.patch(`http://localhost:8080/api/lists/${listId}`, {
+    await axios.patch(`http://164.90.247.244:8080/api/lists/${listId}`, {
       name: title,
       description,
     });

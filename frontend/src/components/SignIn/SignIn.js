@@ -57,7 +57,7 @@ export default function SignIn() {
     };
     
     try {
-      const response = await axios.post('http://localhost:8080/api/auth/login', credentials);
+      const response = await axios.post('http://164.90.247.244:8080/api/auth/login', credentials);
       console.log('Login Response:', response.data);
 
       localStorage.setItem('token', response.data.token);

@@ -58,7 +58,7 @@ export default function SignUp() {
       password: data.get('password'),
     };
 
-    fetch('http://localhost:8080/api/auth/register', {
+    fetch('http://164.90.247.244:8080/api/auth/register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

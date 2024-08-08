@@ -9,7 +9,7 @@ const ImportantTasks = ({ darkMode }) => {
   useEffect(() => {
     const fetchImportantTasks = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/tasks/important');
+        const response = await axios.get('http://164.90.247.244:8080/tasks/important');
         setTasks(response.data);
       } catch (error) {
         console.error('Error fetching important tasks:', error);

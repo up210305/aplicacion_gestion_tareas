@@ -11,7 +11,7 @@ const Home = () => {
   useEffect(() => {
     const fetchTasksForToday = async () => {
       try {
-        const response = await axios.get('http://localhost:8080/tasks/today');
+        const response = await axios.get('http://164.90.247.244:8080/tasks/today');
         console.log('Tasks received:', response.data); // Verifica las fechas aquí
         setTasks(response.data);
       } catch (error) {

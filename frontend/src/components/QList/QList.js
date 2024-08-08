@@ -27,7 +27,7 @@ const QList = ({ darkMode }) => {
 
   const fetchLists = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/api/lists');
+      const response = await axios.get('http://164.90.247.244:8080/api/lists');
       setLists(response.data);
     } catch (error) {
       console.error('Error fetching lists:', error);

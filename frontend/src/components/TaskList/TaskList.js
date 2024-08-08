@@ -114,13 +114,13 @@ const TaskList = ({ darkMode }) => {
         try {
           const [responseTasks, responseList] = await Promise.all([
             axios
-              .get(`http://localhost:8080/api/lists/${listId}/tasks`)
+              .get(`http://164.90.247.244:8080/api/lists/${listId}/tasks`)
               .catch((error) => {
                 console.error("Error fetching tasks:", error);
                 return { data: [] };
               }),
             axios
-              .get(`http://localhost:8080/api/lists/${listId}`)
+              .get(`http://164.90.247.244:8080/api/lists/${listId}`)
               .catch((error) => {
                 console.error("Error fetching list details:", error);
                 return { data: { name: "", description: "" } };
@@ -148,7 +148,7 @@ const TaskList = ({ darkMode }) => {
     }
 
     try {
-      await axios.patch(`http://localhost:8080/api/tasks/${task.id_task}`, {
+      await axios.patch(`http://164.90.247.244:8080/api/tasks/${task.id_task}`, {
         important: !task.important,
       });
       task.important = !task.important;
@@ -168,7 +168,7 @@ const TaskList = ({ darkMode }) => {
     }
 
     try {
-      await axios.patch(`http://localhost:8080/api/tasks/${task.id_task}`, {
+      await axios.patch(`http://164.90.247.244:8080/api/tasks/${task.id_task}`, {
         completed: !task.completed,
       });
       task.completed = !task.completed;
@@ -186,7 +186,7 @@ const TaskList = ({ darkMode }) => {
   const confirmDeleteTask = async () => {
     try {
       await axios.delete(
-        `http://localhost:8080/api/tasks/${taskToDelete.id_task}`
+        `http://164.90.247.244:8080/api/tasks/${taskToDelete.id_task}`
       );
       setTasks(tasks.filter((task) => task.id_task !== taskToDelete.id_task));
       setOpenDeleteDialog(false);
@@ -201,7 +201,7 @@ const TaskList = ({ darkMode }) => {
       return;
     }
     try {
-      await axios.delete(`http://localhost:8080/api/lists/${listId}`);
+      await axios.delete(`http://164.90.247.244:8080/api/lists/${listId}`);
       navigate("/list");
     } catch (error) {
       console.error("Error deleting list:", error);
@@ -222,7 +222,7 @@ const TaskList = ({ darkMode }) => {
 
   const handleUpdateList = async (title, description) => {
     try {
-      await axios.patch(`http://localhost:8080/api/lists/${listId}`, {
+      await axios.patch(`http://164.90.247.244:8080/api/lists/${listId}`, {
         name: title,
         description,
       });
@@ -248,7 +248,7 @@ const TaskList = ({ darkMode }) => {
         console.error("Invalid listId:", listId);
         return;
       }
-      const response = await axios.post("http://localhost:8080/api/tasks", {
+      const response = await axios.post("http://164.90.247.244:8080/api/tasks", {
         task_title: taskName,
         expire_date: dueDate,
         id_list: validListId,

@@ -40,7 +40,7 @@ function Tasks({ darkMode }) {
 
   const fetchTasks = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/tasks/allTasks');
+      const response = await axios.get('http://164.90.247.244:8080/tasks/allTasks');
       console.log('Fetched tasks:', response.data); // Debug log
       setTasks(response.data);
     } catch (error) {
@@ -50,7 +50,7 @@ function Tasks({ darkMode }) {
 
   const handleDeleteTask = async (taskId) => {
     try {
-      await axios.delete(`http://localhost:8080/tasks/${taskId}`);
+      await axios.delete(`http://164.90.247.244:8080/tasks/${taskId}`);
       console.log('Deleted task ID:', taskId); // Debug log
       setTasks(prevTasks => prevTasks.filter(task => task.id !== taskId));
     } catch (error) {
@@ -60,7 +60,7 @@ function Tasks({ darkMode }) {
 
   const updateImportant = async (task) => {
     try {
-      await axios.put(`http://localhost:8080/tasks/updateImportant/${task.id}`, {
+      await axios.put(`http://164.90.247.244:8080/tasks/updateImportant/${task.id}`, {
         ...task,
         important: !task.important,
       });
@@ -83,7 +83,7 @@ function Tasks({ darkMode }) {
 
   const handleSaveEditTask = async () => {
     try {
-      await axios.put(`http://localhost:8080/tasks/updateTask/${editingTask.id}`, {
+      await axios.put(`http://164.90.247.244:8080/tasks/updateTask/${editingTask.id}`, {
         ...editingTask,
         expireDate: editingTask.expireDate ? `${editingTask.expireDate}T00:00:00` : null, // Add time part
       });
@@ -105,7 +105,7 @@ function Tasks({ darkMode }) {
       if (isNaN(employeeId) || !Number.isInteger(employeeId)) {
         throw new Error('Invalid employeeId');
       }
-      const response = await axios.post('http://localhost:8080/tasks/add', {
+      const response = await axios.post('http://164.90.247.244:8080/tasks/add', {
         title: taskName,
         description: taskDescription,
         expireDate: dueDate ? `${dueDate}T00:00:00` : null,
