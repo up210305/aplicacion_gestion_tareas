@@ -46,7 +46,7 @@ function Main() {
       try {
         const userId = localStorage.getItem('userId');
         if (userId) {
-          const response = await axios.get(`http://localhost:8080/api/employee/${userId}`);
+          const response = await axios.get(`http://localhost:8080/api/auth/getEmployee/${userId}`);
           setUser({
             firstName: response.data.firstName,
             lastName: response.data.lastName,
