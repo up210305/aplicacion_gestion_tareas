@@ -24,9 +24,13 @@ public interface TaskMapper {
 
     @Mapping(source = "employee.idEmployee", target = "employeeId")
     @Mapping(source = "taskList.id", target = "taskListId")
+    @Mapping(source = "title", target = "title")  // Mapeo para title
+    @Mapping(source = "description", target = "description")  // Mapeo para description
     TaskDTO toTaskDTO(Task task);
 
     @Mapping(source = "employeeId", target = "employee.idEmployee")
     @Mapping(source = "taskListId", target = "taskList.id")
+    @Mapping(source = "title", target = "title")  // Mapeo para title
+    @Mapping(source = "description", target = "description")  // Mapeo para description
     Task toTask(TaskDTO taskDTO);
 }

@@ -118,4 +118,9 @@ public class TaskController {
     // public ResponseEntity<List<Task>> getTasksByListId(@PathVariable Long idList) {
     //     return ResponseEntity.ok(taskService.findTasksByListId(idList));
     // }
+
+    @GetMapping("/important")
+    public List<TaskDTO> getImportantTasks() {
+        return taskService.getImportantTasks();
+    }
 }

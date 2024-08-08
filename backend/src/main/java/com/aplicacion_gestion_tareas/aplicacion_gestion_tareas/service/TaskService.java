@@ -95,4 +95,10 @@ public class TaskService {
     public List<Task> findTasksByListId(Long idList) {
         return taskRepository.findTasksByListId(idList);
     }
+
+    public List<TaskDTO> getImportantTasks() {
+        return taskRepository.findImportantTasks().stream()
+                .map(taskMapper::toTaskDTO)
+                .collect(Collectors.toList());
+    }
 }

@@ -1,62 +1,60 @@
-// src/components/ImportantTasks/ImportantTasks.js
-import React from 'react';
-import { Box, IconButton, List, ListItem, ListItemText, Typography } from '@mui/material';
-import { Bookmark, Delete, Edit } from '@mui/icons-material';
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import { Box, Card, CardContent, Grid, Typography, IconButton } from '@mui/material';
+import BookmarkIcon from '@mui/icons-material/Bookmark';
 
-// Componente para cada tarea importante
-const ImportantTaskItem = ({ task, onToggleImportant, onDelete, onEdit, darkMode }) => (
-  <ListItem
-    sx={{
-      display: 'flex',
-      justifyContent: 'space-between',
-      backgroundColor: darkMode ? '#333' : 'white',
-      marginBottom: '10px',
-      borderRadius: '4px',
-      color: darkMode ? 'white' : 'inherit',
-    }}
-  >
-    <ListItemText primary={task.text} sx={{ color: darkMode ? 'white' : 'inherit' }} />
-    <Box>
-      <IconButton onClick={() => onToggleImportant(task)} sx={{ color: task.important ? '#1976d2' : darkMode ? '#fff' : 'rgba(0, 0, 0, 0.54)' }}>
-        <Bookmark />
-      </IconButton>
-      <IconButton onClick={() => onDelete(task)} sx={{ color: darkMode ? '#f44336' : 'rgba(0, 0, 0, 0.54)' }}>
-        <Delete />
-      </IconButton>
-      <IconButton onClick={() => onEdit(task.id)} sx={{ color: darkMode ? '#1976d2' : 'rgba(0, 0, 0, 0.54)' }}>
-        <Edit />
-      </IconButton>
-    </Box>
-  </ListItem>
-);
+const ImportantTasks = ({ darkMode }) => {
+  const [tasks, setTasks] = useState([]);
 
-// Componente principal para mostrar tareas importantes
-const ImportantTasks = ({ tasks = [], onToggleImportant, onDelete, onEdit, darkMode }) => {
-  const importantTasks = tasks.filter(task => task.important);
+  useEffect(() => {
+    const fetchImportantTasks = async () => {
+      try {
+        const response = await axios.get('http://localhost:8080/tasks/important');
+        setTasks(response.data);
+      } catch (error) {
+        console.error('Error fetching important tasks:', error);
+      }
+    };
+
+    fetchImportantTasks();
+  }, []);
 
   return (
-    <Box sx={{ padding: '10px' }}>
-      <Typography variant="h6" sx={{ marginBottom: '10px', color: darkMode ? 'white' : 'black' }}>
-        Important Tasks
-      </Typography>
-      {importantTasks.length === 0 ? (
-        <Typography variant="body1" sx={{ color: darkMode ? 'white' : 'black' }}>
-          No important tasks available.
-        </Typography>
-      ) : (
-        <List sx={{ backgroundColor: darkMode ? '#333' : 'white', color: darkMode ? 'white' : 'inherit', borderRadius: '4px' }}>
-          {importantTasks.map(task => (
-            <ImportantTaskItem
-              key={task.id}
-              task={task}
-              onToggleImportant={onToggleImportant}
-              onDelete={onDelete}
-              onEdit={onEdit}
-              darkMode={darkMode}
-            />
-          ))}
-        </List>
-      )}
+    <Box 
+      sx={{ 
+        padding: 4, 
+        height: '100vh', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        justifyContent: 'space-between',
+        // backgroundColor: darkMode ? '#333' : 'white',
+        // color: darkMode ? 'white' : 'inherit'
+      }}
+    >
+      <Box>
+        <Grid item xs={12}>
+          <Box display="flex" alignItems="center" mb={2}>
+            <BookmarkIcon fontSize="large" />
+            <Typography variant="h5" ml={1}>Important Tasks</Typography>
+          </Box>
+          <Grid container spacing={2}>
+            {tasks.map((task, index) => (
+              <Grid item xs={12} md={4} key={index}>
+                <Card >
+                  <CardContent>
+                    <Typography variant="h6" color="textPrimary">
+                      {task.title}
+                    </Typography>
+                    <Typography variant="body2" color="textSecondary">
+                      {task.description}
+                    </Typography>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Grid>
+      </Box>
     </Box>
   );
 };

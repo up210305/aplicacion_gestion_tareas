@@ -31,6 +31,8 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     List<Task> findByExpireDate(@Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
 
+    @Query("SELECT t FROM Task t WHERE t.important = true")
+    List<Task> findImportantTasks();
 
 
 }
