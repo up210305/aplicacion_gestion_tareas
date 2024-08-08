@@ -1,19 +1,22 @@
 package com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.TaskDTO;
+import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.UpdateTaskDTO;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.mapper.TaskMapper;
+import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.model.Employee;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.model.Task;
+import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.model.TaskList;
+import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.repository.EmployeeRepository;
+import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.repository.TaskListRepository;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.repository.TaskRepository;
 
 @Service
@@ -24,15 +27,37 @@ public class TaskService {
     @Autowired
     private TaskMapper taskMapper;
 
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private TaskListRepository taskListRepository;
+
     public List<TaskDTO> getTasks() { 
         return taskRepository.findAll().stream()
                 .map(TaskMapper.INSTANCE::toTaskDTO)
                 .collect(Collectors.toList());
     }
 
-    // public List<Task> getTasks() {
-    //     return taskRepository.findAll();
-    // }
+    public Task addTask(Long employeeId, String title, String description, LocalDateTime expireDate, Long listId) {
+        Employee employee = employeeRepository.findById(employeeId)
+                .orElseThrow(() -> new RuntimeException("Employee not found"));
+
+        Task task = new Task();
+        task.setTitle(title);
+        task.setDescription(description);
+        task.setCreationDate(LocalDateTime.now());
+        task.setExpireDate(expireDate);
+        task.setEmployee(employee);
+
+        if (listId != null) {
+            TaskList taskList = taskListRepository.findById(listId)
+                    .orElseThrow(() -> new RuntimeException("TaskList not found"));
+            task.setTaskList(taskList);
+        }
+
+        return taskRepository.save(task);
+    }
 
     public List<TaskDTO> getTasksForToday(LocalDate today) {
         LocalDateTime startDate = today.atStartOfDay();
@@ -80,9 +105,9 @@ public class TaskService {
     //     return taskRepository.save(task);
     // }
 
-    public void deleteTask(Long id) {
-        taskRepository.deleteById(id);
-    }
+    // public void deleteTask(Long id) {
+    //     taskRepository.deleteById(id);
+    // }
 
     public List<Task> findCompletedTasks() {
         return taskRepository.findCompletedTasks();
@@ -101,4 +126,22 @@ public class TaskService {
                 .map(taskMapper::toTaskDTO)
                 .collect(Collectors.toList());
     }
+
+
+    
+    public void deleteTask(Long id) {
+        taskRepository.deleteById(id);
+    }
+
+    public TaskDTO updateTask(Long id, UpdateTaskDTO taskDTO) {
+        if (taskRepository.existsById(id)) {
+            Task task = taskMapper.toEntity(taskDTO);
+            task.setId(id); // Asegúrate de que el ID sea el correcto
+            Task updatedTask = taskRepository.save(task);
+            return taskMapper.toDTO(updatedTask);
+        } else {
+            return null;
+        }
+    }
+    
 }

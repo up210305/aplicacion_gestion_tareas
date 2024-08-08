@@ -14,6 +14,7 @@ import QList from "../QList";
 import SignIn from "../SignIn";
 import SignUp from "../SignUp";
 import TaskList from "../TaskList";
+import Tasks from "../Tasks/Tasks"; // Importar el componente Tasks
 
 function Main() {
   const [darkMode, setDarkMode] = useState(() => {
@@ -116,7 +117,7 @@ function Main() {
             display: "flex",
             flexDirection: "column",
             backgroundColor: 'inherit',
-            overflowY: "auto", // Agrega esta línea
+            overflowY: "auto",
           }}
         >
           <Box
@@ -167,6 +168,7 @@ function Main() {
               path="/list/:listId/tasks"
               element={<TaskList darkMode={darkMode} />}
             />
+            <Route path="/tasks" element={<Tasks />} /> {/* Añade esta ruta para el componente Tasks */}
           </Routes>
         </Box>
       </Box>
