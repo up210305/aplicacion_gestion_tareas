@@ -53,9 +53,9 @@ public class TaskListController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedTaskListDTO);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTaskList(@PathVariable Long id) {
-        taskListService.deleteTaskList(id);
+    @DeleteMapping("/{listid}")
+    public ResponseEntity<Void> deleteList(@PathVariable Long id) {
+        taskListService.deleteList(id);
         return ResponseEntity.noContent().build();
     }
 }

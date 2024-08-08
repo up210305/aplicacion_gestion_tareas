@@ -17,7 +17,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import AddTask from "../AddTask";
 
 const TaskItem = ({ task, onToggleImportant, onToggleComplete, onDelete, onEdit, darkMode }) => (
@@ -33,8 +33,8 @@ const TaskItem = ({ task, onToggleImportant, onToggleComplete, onDelete, onEdit,
   >
     <Box>
       <ListItemText
-        primary={task.title}
-        secondary={`Created: ${task.creationDate} | Due: ${task.expireDate || "N/A"}`}
+        primary={task.task_title}
+        secondary={`Created: ${task.creation_date} | Due: ${task.expire_date || "N/A"}`}
         sx={{ color: darkMode ? "white" : "inherit" }}
       />
     </Box>
@@ -62,7 +62,7 @@ const TaskItem = ({ task, onToggleImportant, onToggleComplete, onDelete, onEdit,
         <Delete />
       </IconButton>
       <IconButton
-        onClick={() => onEdit(task.id)}
+        onClick={() => onEdit(task.id_task)}
         sx={{ color: darkMode ? "#1976d2" : "rgba(0, 0, 0, 0.54)" }}
       >
         <Edit />
@@ -73,8 +73,9 @@ const TaskItem = ({ task, onToggleImportant, onToggleComplete, onDelete, onEdit,
 
 const TaskList = ({ darkMode }) => {
   const { listId } = useParams();
+  const navigate = useNavigate();
   const [tasks, setTasks] = useState([]);
-  const [open, setOpen] = useState(false);
+  const [openDeleteDialog, setOpenDeleteDialog] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [listTitle, setListTitle] = useState("");
@@ -84,21 +85,30 @@ const TaskList = ({ darkMode }) => {
     const fetchTasksAndList = async () => {
       if (listId) {
         try {
-          const responseTasks = await axios.get(`http://localhost:8080/api/lists/${listId}/tasks`);
+          // Ejecuta ambas peticiones en paralelo
+          const [responseTasks, responseList] = await Promise.all([
+            axios.get(`http://localhost:8080/api/lists/${listId}/tasks`).catch((error) => {
+              console.error("Error fetching tasks:", error);
+              return { data: [] }; // Retorna una respuesta vacía en caso de error
+            }),
+            axios.get(`http://localhost:8080/api/lists/${listId}`).catch((error) => {
+              console.error("Error fetching list details:", error);
+              return { data: { name: '', description: '' } }; // Retorna una respuesta vacía en caso de error
+            }),
+          ]);
+  
+          // Procesa las respuestas
           setTasks(responseTasks.data);
-
-          const responseList = await axios.get(`http://localhost:8080/api/lists/${listId}`);
-          const listDetails = responseList.data;
-          setListTitle(listDetails.name);
-          setListDescription(listDetails.description);
+          setListTitle(responseList.data.name);
+          setListDescription(responseList.data.description);
         } catch (error) {
-          console.error("Error fetching tasks and list:", error);
+          console.error("Unexpected error:", error);
         }
       } else {
         console.error("listId is undefined or null");
       }
     };
-
+  
     fetchTasksAndList();
   }, [listId]);
 
@@ -141,21 +151,34 @@ const TaskList = ({ darkMode }) => {
 
   const handleDelete = (task) => {
     setTaskToDelete(task);
-    setOpen(true);
+    setOpenDeleteDialog(true);
   };
 
-  const confirmDelete = async () => {
+  const confirmDeleteTask = async () => {
     try {
       await axios.delete(`http://localhost:8080/api/tasks/${taskToDelete.id_task}`);
       setTasks(tasks.filter((task) => task.id_task !== taskToDelete.id_task));
-      setOpen(false);
+      setOpenDeleteDialog(false);
     } catch (error) {
       console.error("Error deleting task:", error);
     }
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleDeleteList = async () => {
+    if (!listId) {
+      console.error("Invalid listId:", listId);
+      return;
+    }
+    try {
+      await axios.delete(`http://localhost:8080/api/lists/${listId}`);
+      navigate('/list'); // Redirige a la lista de listas después de la eliminación
+    } catch (error) {
+      console.error("Error deleting list:", error);
+    }
+  };
+
+  const handleCloseDeleteDialog = () => {
+    setOpenDeleteDialog(false);
   };
 
   const handleEdit = (taskId) => {
@@ -179,7 +202,7 @@ const TaskList = ({ darkMode }) => {
       const response = await axios.post("http://localhost:8080/api/tasks", {
         task_title: taskName,
         expire_date: dueDate,
-        list_id: validListId,
+        id_list: validListId,
       });
       const newTask = response.data;
       setTasks([...tasks, newTask]);
@@ -218,7 +241,7 @@ const TaskList = ({ darkMode }) => {
             <Edit />
           </IconButton>
           <IconButton
-            onClick={() => console.log("Delete list")}
+            onClick={() => handleDeleteList()}
             sx={{ color: darkMode ? "#f44336" : "rgba(0, 0, 0, 0.54)" }}
           >
             <Delete />
@@ -253,7 +276,7 @@ const TaskList = ({ darkMode }) => {
           ))}
         </MUIList>
       </Box>
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={openDeleteDialog} onClose={handleCloseDeleteDialog}>
         <DialogTitle>Delete Task</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -261,10 +284,10 @@ const TaskList = ({ darkMode }) => {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="primary">
+          <Button onClick={handleCloseDeleteDialog} color="primary">
             Cancel
           </Button>
-          <Button onClick={confirmDelete} color="primary">
+          <Button onClick={confirmDeleteTask} color="primary">
             Delete
           </Button>
         </DialogActions>
