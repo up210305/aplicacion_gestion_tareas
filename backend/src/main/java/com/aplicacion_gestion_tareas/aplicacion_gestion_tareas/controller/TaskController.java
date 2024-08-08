@@ -7,16 +7,13 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.TaskDTO;
+import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.UpdateTaskDTO;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.model.Task;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.service.TaskService;
+
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/tasks")
@@ -59,10 +56,11 @@ public class TaskController {
     //     return taskService.saveTask(taskDTO);
     // }
 
-    @DeleteMapping("/deleteTask/{id}")
-    public void deleteTask(@PathVariable Long id) {
-        taskService.deleteTask(id);
-    }    
+    // @DeleteMapping("/deleteTask/{id}")
+    // public void deleteTask(@PathVariable Long id) {
+    //     taskService.deleteTask(id);
+    // } 
+
     // @GetMapping("/getTask/{id}")
     // public ResponseEntity<Task> getTaskById(@PathVariable Long id) {
     //     Optional<Task> task = taskService.getTask(id);
@@ -121,4 +119,22 @@ public class TaskController {
     public List<TaskDTO> getImportantTasks() {
         return taskService.getImportantTasks();
     }
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTask(@PathVariable Long id) {
+        taskService.deleteTask(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/updateTask/{id}")
+    public ResponseEntity<TaskDTO> updateTask(@PathVariable Long id, @RequestBody UpdateTaskDTO taskDTO) {
+        TaskDTO updatedTask = taskService.updateTask(id, taskDTO);
+        if (updatedTask != null) {
+            return ResponseEntity.ok(updatedTask);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 }

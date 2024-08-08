@@ -4,7 +4,9 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
+import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.CreateTaskDTO;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.TaskDTO;
+import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.UpdateTaskDTO;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.model.Task;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -15,7 +17,9 @@ public interface TaskMapper {
 
     TaskMapper INSTANCE = Mappers.getMapper(TaskMapper.class);
 
-    Task toEntity(TaskDTO taskDTO);
+    Task toEntity(CreateTaskDTO taskDTO);
+
+    Task toEntity(UpdateTaskDTO taskDTO);
     TaskDTO toDTO(Task task);
     
     // @Mapping(target = "idTask", ignore = true)
@@ -33,4 +37,6 @@ public interface TaskMapper {
     @Mapping(source = "title", target = "title")  // Mapeo para title
     @Mapping(source = "description", target = "description")  // Mapeo para description
     Task toTask(TaskDTO taskDTO);
+
+    
 }
