@@ -36,7 +36,7 @@ public class EmployeeController {
         return employeeService.loginEmployee(loginRequest.getUsername(), loginRequest.getPassword())
                 .map(employee -> {
                     String token = JwtUtil.generateToken(employee.getIdEmployee());
-                    return ResponseEntity.ok("{\"token\":\"" + token + "\", \"userId\":\"" + employee.getIdEmployee() + "\"}");
+                    return ResponseEntity.ok("{\"token\":\"" + token + "\", \"employeeId\":\"" + employee.getIdEmployee() + "\"}");
                 })
                 .orElseGet(() -> ResponseEntity.status(401).body("{\"message\": \"Invalid credentials\"}"));
     }

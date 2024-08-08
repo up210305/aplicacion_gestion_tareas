@@ -18,18 +18,22 @@ const NewList = ({ darkMode, onSave, onCancel }) => {
       return;
     }
     try {
+      // Asegúrate de que los nombres de las propiedades coincidan con lo que espera tu backend
       const response = await axios.post(
         'http://localhost:8080/api/lists',
-        { listName: title, description, employeeId } // Envia el cuerpo de la solicitud
+        {
+          listName: title,
+          description: description,
+          employeeId: Number(employeeId) // Asegúrate de enviar el ID como un número
+        }
       );
-      console.log('List created:', response.data); // Agrega esto si quieres ver la respuesta
+      console.log('List created:', response.data); // Log de la respuesta para depuración
       if (onSave) onSave(); // Llama al callback onSave si se proporciona
       navigate('/list'); // Redirige a la página de listas
     } catch (error) {
       console.error('Error creating list:', error);
     }
   };
-  
 
   const handleCancel = () => {
     if (onCancel) onCancel(); // Llama al callback de cancelación si se proporciona

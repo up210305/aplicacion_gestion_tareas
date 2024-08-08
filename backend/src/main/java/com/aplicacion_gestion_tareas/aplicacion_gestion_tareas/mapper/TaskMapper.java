@@ -1,21 +1,31 @@
 package com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.mapper;
 
+import java.util.List;
+
+import org.mapstruct.InjectionStrategy;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.factory.Mappers;
+import org.mapstruct.Named;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.TaskDTO;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.model.Task;
 
-@Mapper(componentModel = "spring")
+@Mapper(
+  componentModel = "spring", 
+  injectionStrategy = InjectionStrategy.CONSTRUCTOR, 
+  nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
+)
 public interface TaskMapper {
-    TaskMapper INSTANCE = Mappers.getMapper(TaskMapper.class);
 
-    @Mapping(source = "employee.idEmployee", target = "employeeId")
-    @Mapping(source = "taskList.id", target = "taskListId")
-    TaskDTO toTaskDTO(Task task);
+  TaskDTO toTaskDTO(Task task);
 
-    @Mapping(source = "employeeId", target = "employee.idEmployee")
-    @Mapping(source = "taskListId", target = "taskList.id")
-    Task toTask(TaskDTO taskDTO);
+  Task toTask(TaskDTO taskDTO);
+
+  @Named("TaskList")
+  default List<TaskDTO> toTaskDTOList(List<Task> sourceList) {
+    return sourceList
+        .stream()
+        .map(this::toTaskDTO)
+        .toList();
+  }
 }

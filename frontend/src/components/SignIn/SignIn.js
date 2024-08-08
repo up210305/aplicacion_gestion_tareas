@@ -61,11 +61,11 @@ export default function SignIn() {
       console.log('Login Response:', response.data);
 
       localStorage.setItem('token', response.data.token);
-      localStorage.setItem('userId', response.data.userId);
+      localStorage.setItem('employeeId', response.data.employeeId);
 
       // Verify that the data is stored in local storage
       console.log('Stored token:', localStorage.getItem('token'));
-      console.log('Stored userId:', localStorage.getItem('userId'));
+      console.log('Stored employeeId:', localStorage.getItem('employeeId'));
       
       navigate('/home');
     } catch (error) {

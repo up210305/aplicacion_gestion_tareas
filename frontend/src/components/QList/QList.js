@@ -7,6 +7,7 @@ import NewList from '../NewList';
 
 const QList = ({ darkMode }) => {
   const [lists, setLists] = useState([]);
+  const [filteredLists, setFilteredLists] = useState([]);
   const [showNewList, setShowNewList] = useState(false);
   const navigate = useNavigate();
 
@@ -22,6 +23,17 @@ const QList = ({ darkMode }) => {
 
     fetchLists();
   }, []);
+
+  useEffect(() => {
+    const storedEmployeeId = parseInt(localStorage.employeeId, 10);
+  
+    const filteredLists = lists.filter((list) => {
+      return list.employeeId === storedEmployeeId;
+    });
+
+    setFilteredLists(filteredLists);
+  }, [lists]);
+  
 
   const handleListClick = (listId) => {
     if (listId) {
@@ -60,7 +72,7 @@ const QList = ({ darkMode }) => {
         My Lists
       </Typography>
       <List>
-        {lists.map((list) => (
+      {filteredLists.map((list) => (
           <ListItem
             key={list.id}
             sx={{

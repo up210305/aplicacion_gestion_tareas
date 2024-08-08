@@ -1,18 +1,45 @@
 package com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class TaskDTO {
-    private Long id;
-    private String title;
-    private String description;
-    private LocalDateTime creationDate;
-    private LocalDateTime expireDate;
-    private Boolean completed;
-    private Boolean important;
+
+    @JsonProperty("id_task")
+    private Long idTask;
+
+    @JsonProperty("task_title")
+    private String taskTitle;
+
+    @JsonProperty("task_description")
+    private String taskDescription;
+
+    @JsonProperty("creation_date")
+    private LocalDate creationDate;
+
+    @JsonProperty("expire_date")
+    private LocalDate expireDate;
+
+    @JsonProperty("completed")
+    private boolean completed;
+
+    @JsonProperty("important")
+    private boolean important;
+
+    @JsonProperty("id_employee")
     private Long employeeId;
-    private Long taskListId;
+
+    @JsonProperty("id_list")
+    private Long listId;
+
 }

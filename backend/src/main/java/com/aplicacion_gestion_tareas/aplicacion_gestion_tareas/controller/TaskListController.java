@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.TaskDTO;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.TaskListDTO;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.service.TaskListService;
 
@@ -29,15 +28,6 @@ public class TaskListController {
     @GetMapping
     public List<TaskListDTO> getAllTaskLists() {
         return taskListService.getTaskLists();
-    }
-
-    @GetMapping("/{listId}/tasks")
-    public ResponseEntity<List<TaskDTO>> getTasksByListId(@PathVariable Long listId) {
-        List<TaskDTO> tasks = taskListService.getTasksByListId(listId);
-        if (tasks.isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(tasks);
     }
 
     @GetMapping("/{listId}")

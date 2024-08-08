@@ -2,18 +2,14 @@ package com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.TaskDTO;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.dto.TaskListDTO;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.mapper.TaskListMapper;
-import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.mapper.TaskMapper;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.model.TaskList;
 import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.repository.TaskListRepository;
-import com.aplicacion_gestion_tareas.aplicacion_gestion_tareas.repository.TaskRepository;
 
 @Service
 public class TaskListService {
@@ -22,30 +18,15 @@ public class TaskListService {
     private TaskListRepository taskListRepository;
 
     @Autowired
-    private TaskRepository taskRepository;
-
-    @Autowired
     private TaskListMapper taskListMapper;
 
-    @Autowired
-    private TaskMapper taskMapper;
-
-    public List<TaskDTO> getTasksByListId(Long listId) {
-        return taskRepository.findByTaskListId(listId)
-                .stream()
-                .map(taskMapper::toTaskDTO)
-                .collect(Collectors.toList());
-    }
-
     public List<TaskListDTO> getTaskLists() {
-        return taskListRepository.findAll()
-                .stream()
-                .map(taskListMapper::toTaskListDTO)
-                .collect(Collectors.toList());
+        List<TaskList> taskLists = taskListRepository.findAll();
+        return taskListMapper.toTaskListDTOList(taskLists);
     }
 
-    public Optional<TaskListDTO> getTaskListById(Long id) {
-        return taskListRepository.findById(id)
+    public Optional<TaskListDTO> getTaskListById(Long listId) {
+        return taskListRepository.findById(listId)
                 .map(taskListMapper::toTaskListDTO);
     }
 
