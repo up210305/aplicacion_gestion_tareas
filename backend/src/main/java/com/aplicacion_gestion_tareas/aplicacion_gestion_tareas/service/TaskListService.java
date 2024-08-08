@@ -55,7 +55,7 @@ public class TaskListService {
         return taskListMapper.toTaskListDTO(savedTaskList);
     }
 
-    public void deleteTaskList(Long id) {
+    public void deleteList(Long id) {
         taskListRepository.deleteById(id);
     }
 }
