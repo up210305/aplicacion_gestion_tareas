@@ -1,11 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import WbSunnyIcon from '@mui/icons-material/WbSunny';
-// import StarIcon from '@mui/icons-material/Star';
-// import EditIcon from '@mui/icons-material/Edit';
-// import DeleteIcon from '@mui/icons-material/Delete';
-import { Box, Card, CardContent, Grid, IconButton, Typography, InputBase, Paper } from '@mui/material';
+import { Box, Card, CardContent, Grid, Typography, InputBase, Paper } from '@mui/material';
 import axios from 'axios';
-import moment from 'moment'; // Importa moment
+import moment from 'moment-timezone'; // Importa moment-timezone
 
 const Home = () => {
   const [tasks, setTasks] = useState([]);
@@ -33,9 +30,19 @@ const Home = () => {
     task.title && task.title.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // const handleDeleteTask = (task) => {
-  //   setTasks(tasks.filter(t => t !== task));
-  // };
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    const date = moment.utc(dateString).local(); // Convierte a la zona horaria local
+    if (!date.isValid()) {
+      console.error('Invalid date:', dateString);
+      return 'Invalid Date';
+    }
+
+    // Ajustar el mes y el día
+    const adjustedDate = date.clone().subtract(1, 'months').add(1, 'days');
+    
+    return adjustedDate.format('MMMM DD, YYYY');
+  };
 
   return (
     <Box 
@@ -65,22 +72,11 @@ const Home = () => {
                       {task.description}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
-                      Created: {task.creationDate ? moment(task.creationDate).format('MMMM DD, YYYY') : 'N/A'}
+                      Created: {formatDate(task.creationDate)}
                     </Typography>
                     <Typography variant="body2" color="textSecondary">
-                      Due: {task.expireDate ? moment(task.expireDate).format('MMMM DD, YYYY') : 'N/A'}
+                      Due: {formatDate(task.expireDate)}
                     </Typography>
-                    {/* <Box display="flex" justifyContent="flex-end">
-                      <IconButton>
-                        <StarIcon />
-                      </IconButton>
-                      <IconButton>
-                        <EditIcon />
-                      </IconButton>
-                      <IconButton onClick={() => handleDeleteTask(task)}>
-                        <DeleteIcon />
-                      </IconButton>
-                    </Box> */}
                   </CardContent>
                 </Card>
               </Grid>

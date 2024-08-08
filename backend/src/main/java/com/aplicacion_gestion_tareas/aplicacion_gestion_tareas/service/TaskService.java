@@ -35,15 +35,14 @@ public class TaskService {
     // }
 
     public List<TaskDTO> getTasksForToday(LocalDate today) {
-        // Inicio del día actual
         LocalDateTime startDate = today.atStartOfDay();
-        // Fin del día actual (23:59:59.999999999)
         LocalDateTime endDate = today.atTime(23, 59, 59, 999_999_999);
-    
-        // Obtener las tareas que están dentro del rango de fechas
         List<Task> tasks = taskRepository.findByExpireDate(startDate, endDate);
         return tasks.stream().map(taskMapper::toTaskDTO).collect(Collectors.toList());
     }
+    
+    
+    
     
     
     
