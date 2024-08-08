@@ -107,13 +107,16 @@ function Main() {
           username={user.username} 
         />}
         <Box
+          component="main"
           sx={{
             flex: 1,
             p: 2,
-            ml: showAside ? "250px" : "0",
+            ml: showAside ? { sm: "250px", xs: "0" } : "0",
+            transition: 'margin-left 0.3s',
             display: "flex",
             flexDirection: "column",
             backgroundColor: 'inherit',
+            overflowY: "auto", // Agrega esta línea
           }}
         >
           <Box
