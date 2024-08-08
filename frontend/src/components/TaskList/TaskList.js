@@ -1,4 +1,4 @@
-import { Bookmark, Delete, Edit } from "@mui/icons-material";
+import { Bookmark, BookmarkBorder, CheckCircle, Delete, Edit } from "@mui/icons-material";
 import {
   Alert,
   Box,
@@ -20,7 +20,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import AddTask from "../AddTask";
 
-const TaskItem = ({ task, onToggleImportant, onDelete, onEdit, darkMode }) => (
+const TaskItem = ({ task, onToggleImportant, onToggleComplete, onDelete, onEdit, darkMode }) => (
   <ListItem
     sx={{
       display: "flex",
@@ -40,12 +40,20 @@ const TaskItem = ({ task, onToggleImportant, onDelete, onEdit, darkMode }) => (
     </Box>
     <Box>
       <IconButton
-        onClick={() => onToggleImportant(task)}
+        onClick={() => onToggleComplete(task)}
         sx={{
-          color: task.important ? "#1976d2" : darkMode ? "#fff" : "rgba(0, 0, 0, 0.54)",
+          color: task.completed ? "#4caf50" : darkMode ? "#fff" : "rgba(0, 0, 0, 0.54)",
         }}
       >
-        <Bookmark />
+        <CheckCircle />
+      </IconButton>
+      <IconButton
+        onClick={() => onToggleImportant(task)}
+        sx={{
+          color: task.important ? "#ff9800" : darkMode ? "#fff" : "rgba(0, 0, 0, 0.54)",
+        }}
+      >
+        {task.important ? <Bookmark /> : <BookmarkBorder />}
       </IconButton>
       <IconButton
         onClick={() => onDelete(task)}
@@ -114,6 +122,23 @@ const TaskList = ({ darkMode }) => {
     }
   };
 
+  const handleToggleComplete = async (task) => {
+    if (!task || !task.id_task) {
+      console.error("Invalid task:", task);
+      return;
+    }
+
+    try {
+      await axios.patch(`http://localhost:8080/api/tasks/${task.id_task}`, {
+        completed: !task.completed,
+      });
+      task.completed = !task.completed;
+      setTasks(tasks.map((t) => (t.id_task === task.id_task ? task : t)));
+    } catch (error) {
+      console.error("Error updating task completion:", error);
+    }
+  };
+
   const handleDelete = (task) => {
     setTaskToDelete(task);
     setOpen(true);
@@ -164,7 +189,7 @@ const TaskList = ({ darkMode }) => {
   };
 
   return (
-    <Box sx={{ flex: 1, p: 2, display: "flex", flexDirection: "column" }}>
+    <Box sx={{ flex: 1, p: 2, display: "flex", flexDirection: "column", height: "100vh" }}>
       <Box
         sx={{
           backgroundColor: darkMode ? "rgb(60,101,156)" : "#e0e0e0", // General shading color
@@ -172,14 +197,33 @@ const TaskList = ({ darkMode }) => {
           borderRadius: "4px",
           padding: "10px",
           marginBottom: "20px",
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
         }}
       >
-        <Typography variant="h5" gutterBottom>
-          {listTitle || "List Title"}
-        </Typography>
-        <Typography variant="body1">
-          {listDescription || "List Description"}
-        </Typography>
+        <Box>
+          <Typography variant="h5" gutterBottom>
+            {listTitle || "List Title"}
+          </Typography>
+          <Typography variant="body1">
+            {listDescription || "List Description"}
+          </Typography>
+        </Box>
+        <Box>
+          <IconButton
+            onClick={() => console.log("Edit list")}
+            sx={{ color: darkMode ? "#1976d2" : "rgba(0, 0, 0, 0.54)" }}
+          >
+            <Edit />
+          </IconButton>
+          <IconButton
+            onClick={() => console.log("Delete list")}
+            sx={{ color: darkMode ? "#f44336" : "rgba(0, 0, 0, 0.54)" }}
+          >
+            <Delete />
+          </IconButton>
+        </Box>
       </Box>
       <Box
         sx={{
@@ -201,6 +245,7 @@ const TaskList = ({ darkMode }) => {
               key={task.id_task} // Ensure this property is unique
               task={task}
               onToggleImportant={handleToggleImportant}
+              onToggleComplete={handleToggleComplete}
               onDelete={handleDelete}
               onEdit={handleEdit}
               darkMode={darkMode}
